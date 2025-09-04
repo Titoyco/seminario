@@ -43,11 +43,7 @@ public class AltaClientePanel extends JPanel {
 
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        nombreField.setBackground(new Color(230, 235, 245)); // Fondo claro
-        nombreField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(176, 196, 222), 1, true), // Borde azul claro
-            BorderFactory.createEmptyBorder(8, 12, 8, 12) // Espaciado interno
-        ));
+        nombreField.setBackground(Color.WHITE); // Fondo claro
         nombreField.setPreferredSize(new Dimension(300, 30)); // Establece ancho mínimo de 300px y alto de 30px
         gbc.gridx = 1; gbc.gridy = 1;
         add(nombreField, gbc);
@@ -61,11 +57,7 @@ public class AltaClientePanel extends JPanel {
 
         docField = new JTextField();
         docField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        docField.setBackground(new Color(230, 235, 245));
-        docField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(176, 196, 222), 1, true),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+        docField.setBackground(Color.WHITE);
         docField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
         gbc.gridx = 1; gbc.gridy = 2;
         add(docField, gbc);
@@ -79,11 +71,7 @@ public class AltaClientePanel extends JPanel {
 
         dirField = new JTextField();
         dirField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        dirField.setBackground(new Color(230, 235, 245));
-        dirField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(176, 196, 222), 1, true),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+        dirField.setBackground(Color.WHITE);
         dirField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
         gbc.gridx = 1; gbc.gridy = 3;
         add(dirField, gbc);
@@ -97,11 +85,7 @@ public class AltaClientePanel extends JPanel {
 
         telField = new JTextField();
         telField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        telField.setBackground(new Color(230, 235, 245));
-        telField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(176, 196, 222), 1, true),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+        telField.setBackground(Color.WHITE);
         telField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
         gbc.gridx = 1; gbc.gridy = 4;
         add(telField, gbc);
@@ -115,11 +99,9 @@ public class AltaClientePanel extends JPanel {
 
         emailField = new JTextField();
         emailField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        emailField.setBackground(new Color(230, 235, 245));
-        emailField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(176, 196, 222), 1, true),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+        emailField.setForeground(new Color(56, 81, 145));
+        emailField.setBackground(Color.WHITE);
+        emailField.setBorder(BorderFactory.createLineBorder(new Color(56, 81, 145)));
         emailField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
         gbc.gridx = 1; gbc.gridy = 5;
         add(emailField, gbc);
@@ -129,15 +111,11 @@ public class AltaClientePanel extends JPanel {
         guardarBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         guardarBtn.setBackground(new Color(56, 81, 145));
         guardarBtn.setForeground(Color.WHITE);
-        guardarBtn.setFocusPainted(false);
-        guardarBtn.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
-        guardarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        guardarBtn.setToolTipText("Guardar cliente");
         gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         add(guardarBtn, gbc);
 
 
-        
+
 
         // Espacio extra al final para estética y empujar los campos hacia arriba
         gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
