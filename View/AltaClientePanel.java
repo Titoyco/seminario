@@ -111,10 +111,9 @@ public class AltaClientePanel extends JPanel {
         guardarBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         guardarBtn.setBackground(new Color(56, 81, 145));
         guardarBtn.setForeground(Color.WHITE);
+        guardarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         add(guardarBtn, gbc);
-
-
 
 
         // Espacio extra al final para estética y empujar los campos hacia arriba

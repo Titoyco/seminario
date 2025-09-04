@@ -33,4 +33,11 @@ public class Cliente {
     public String getDireccion() { return direccion; }
     public String getTelefono() { return telefono; }
     public String getEmail() { return email; }
+
+
+    // Agrega este método para mostrar el nombre e ID en el JComboBox
+    @Override
+    public String toString() {
+        return nombre + " (ID: " + id + ")";
+    }
 }

@@ -45,11 +45,13 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarMenus() {
         JMenuBar menuBar = new JMenuBar(); // Barra de menú superior
 
-        // Menú de clientes y su opción de alta
+        // Menú de clientes y su opción de alta/baja
         JMenu clientesMenu = new JMenu("Clientes"); // Crea menú "Clientes"
         JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente"); // Opción para alta de cliente
+        altaClienteItem.addActionListener(e -> mostrarAltaCliente()); // Muestra el panel de alta de cliente
         clientesMenu.add(altaClienteItem); // Añade la opción al menú
         JMenuItem bajaClienteItem = new JMenuItem("Baja de Cliente"); // Opción para baja de cliente
+        bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel()); // Muestra el panel de baja de cliente
         clientesMenu.add(bajaClienteItem); // Añade la opción al menú
 
         menuBar.add(clientesMenu); // Añade el menú a la barra
@@ -61,12 +63,14 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         // Menú de reportes
         JMenu reportesMenu = new JMenu("Reportes"); // Crea menú "Reportes"
         JMenuItem listarClientesItem = new JMenuItem("Listar Clientes");
+        listarClientesItem.addActionListener(e -> mostrarListaClientes()); // Acción para listar clientes
         reportesMenu.add(listarClientesItem);
         menuBar.add(reportesMenu); // Añade el menú a la barra
 
         // Menú de sistema y su opción de cambio de contraseña
         JMenu sistemaMenu = new JMenu("Sistema"); // Crea menú "Sistema"
         JMenuItem cambioContraItem = new JMenuItem("Cambio de contraseña"); // Opción de cambio de contraseña
+        cambioContraItem.addActionListener(e -> mostrarCambioContraPanel()); // Muestra el panel de cambio de contraseña
         sistemaMenu.add(cambioContraItem); // Añade la opción al menú
         menuBar.add(sistemaMenu); // Añade el menú a la barra
 
@@ -74,7 +78,7 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
 
         mainPanel.removeAll(); // Limpia el panel principal
 
-            // Crea panel de bienvenida con el mismo color que LoginPanel
+        // Crea panel de bienvenida con el mismo color que LoginPanel
         JPanel bienvenidaPanel = new JPanel(new BorderLayout());
         bienvenidaPanel.setBackground(new Color(245, 249, 255)); // Color igual al LoginPanel
 
@@ -87,18 +91,11 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
 
         mainPanel.add(bienvenidaPanel, BorderLayout.CENTER); // Añade el panel de bienvenida al centro
 
-        // Acción para mostrar el panel de alta de cliente al seleccionar la opción
-        altaClienteItem.addActionListener(e -> mostrarAltaCliente());
-        // Acción para mostrar el panel de lista de clientes al seleccionar la opción
-        listarClientesItem.addActionListener(e -> mostrarListaClientes());
-        // Acción para mostrar el panel de cambio de contraseña al seleccionar la opción
-        cambioContraItem.addActionListener(e -> mostrarCambioContraPanel());
-        // Acción para mostrar el panel de baja de cliente al seleccionar la opción
-        bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel());
-
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
     }
+
+
 
     // Muestra el panel de alta de cliente usando el controlador
     private void mostrarAltaCliente() {
@@ -153,7 +150,7 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     // Muestra el panel de cambio de contraseña
     private void mostrarCambioContraPanel() {
         mainPanel.removeAll(); // Limpia el panel principal
-        CambioContraPanel panel = new CambioContraPanel(() -> mostrarMenus()); // Crea el panel de cambio de contraseña
+        PassPanel panel = new PassPanel(() -> mostrarMenus()); // Crea el panel de cambio de contraseña
         new PassController(panel, () -> mostrarMenus()); // Conecta el controlador (esto agrega el listener)
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
@@ -163,7 +160,7 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarListaClientes() {
         mainPanel.removeAll();
         ListaClientesPanel panel = new ListaClientesPanel();
-            // Aquí debes cargar los clientes:
+        // Aquí debes cargar los clientes:
         List<Cliente> clientes = ClienteController.listarClientes();
         panel.setClientes(clientes);
         mainPanel.add(panel, BorderLayout.CENTER);
