@@ -5,11 +5,11 @@ import Model.VariablesDAO;
 
 import javax.swing.*;
 
-public class CambioContraController {
+public class PassController {
 
     private CambioContraPanel panel;
 
-    public CambioContraController(CambioContraPanel panel, Runnable onSuccess) {
+    public PassController(CambioContraPanel panel, Runnable onSuccess) {
         this.panel = panel;
 
         // Agrega el listener al botón guardar del panel

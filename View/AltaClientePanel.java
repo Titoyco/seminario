@@ -136,6 +136,9 @@ public class AltaClientePanel extends JPanel {
         gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         add(guardarBtn, gbc);
 
+
+        
+
         // Espacio extra al final para estética y empujar los campos hacia arriba
         gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
         gbc.weighty = 1.0; // Empuja los campos hacia arriba si el panel crece

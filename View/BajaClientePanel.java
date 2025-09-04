@@ -1,9 +1,14 @@
 package View;
 import javax.swing.*;
 import java.awt.*;
-import Model.ClienteDAO;
+import java.awt.event.ActionListener;
 
 public class BajaClientePanel extends JPanel {
+
+
+    private JButton eliminarBtn;
+    private JTextField idField;
+
     public BajaClientePanel() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -28,19 +33,21 @@ public class BajaClientePanel extends JPanel {
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         add(eliminarBtn, gbc);
 
-        eliminarBtn.addActionListener(e -> {
-            try {
-                int id = Integer.parseInt(idField.getText().trim());
-                boolean ok = ClienteDAO.eliminarPorId(id);
-                if (ok) {
-                    JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente.");
-                    idField.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Cliente no encontrado o error en la eliminación.");
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Ingrese un ID válido.");
-            }
-        });
+
+
+    }
+
+    // Permite obtener el ID ingresado (usado por el controlador)
+    public String getId() {
+        return idField.getText().trim();
+    }
+
+    // Permite agregar el listener al botón Eliminar (usado por el controlador)
+    public void setEliminarListener(ActionListener listener) {
+        eliminarBtn.addActionListener(listener);
+    }
+    // Limpia el campo de ID
+    public void limpiarCampos() {
+        idField.setText("");
     }
 }

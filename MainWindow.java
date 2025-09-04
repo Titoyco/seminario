@@ -1,8 +1,9 @@
 import javax.swing.*; // Importa clases de Swing para UI
 
 import Controller.*; // Importa los controladores
+import Model.*;
 import View.*; // Importa todos los paneles de la vista
-
+import java.util.List;
 import java.awt.*; // Importa layouts y componentes de AWT
 
 public class MainWindow extends JFrame { // Clase principal de la ventana
@@ -48,6 +49,9 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         JMenu clientesMenu = new JMenu("Clientes"); // Crea menú "Clientes"
         JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente"); // Opción para alta de cliente
         clientesMenu.add(altaClienteItem); // Añade la opción al menú
+        JMenuItem bajaClienteItem = new JMenuItem("Baja de Cliente"); // Opción para baja de cliente
+        clientesMenu.add(bajaClienteItem); // Añade la opción al menú
+
         menuBar.add(clientesMenu); // Añade el menú a la barra
 
         // Menú de créditos
@@ -89,6 +93,8 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         listarClientesItem.addActionListener(e -> mostrarListaClientes());
         // Acción para mostrar el panel de cambio de contraseña al seleccionar la opción
         cambioContraItem.addActionListener(e -> mostrarCambioContraPanel());
+        // Acción para mostrar el panel de baja de cliente al seleccionar la opción
+        bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel());
 
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
@@ -98,6 +104,25 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarAltaCliente() {
         mainPanel.removeAll(); // Limpia el panel principal
         AltaClientePanel panel = new AltaClientePanel(); // Crea el panel de alta de cliente
+
+        // Agrega el listener para el botón guardar
+        panel.setGuardarListener(e -> {
+            String nombre = panel.getNombre();
+            String documento = panel.getDocumento();
+            String direccion = panel.getDireccion();
+            String telefono = panel.getTelefono();
+            String email = panel.getEmail();
+
+            boolean ok = Controller.ClienteController.altaCliente(nombre, documento, direccion, telefono, email);
+
+            if (ok) {
+                JOptionPane.showMessageDialog(panel, "Cliente guardado correctamente.");
+                panel.limpiarCampos();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Error al guardar cliente.");
+            }
+        });
+
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
@@ -107,6 +132,19 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarBajaClientePanel() {
         mainPanel.removeAll(); // Limpia el panel principal
         BajaClientePanel panel = new BajaClientePanel(); // Crea el panel de baja de cliente
+
+        // Agrega el listener para el botón eliminar
+        panel.setEliminarListener(e -> {
+            int id = Integer.parseInt(panel.getId());
+            boolean ok = Controller.ClienteController.bajaCliente(id);
+            if (ok) {
+                JOptionPane.showMessageDialog(panel, "Cliente eliminado correctamente.");
+                panel.limpiarCampos();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Error al eliminar cliente.");
+            }
+        });
+
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
@@ -116,6 +154,7 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarCambioContraPanel() {
         mainPanel.removeAll(); // Limpia el panel principal
         CambioContraPanel panel = new CambioContraPanel(() -> mostrarMenus()); // Crea el panel de cambio de contraseña
+        new PassController(panel, () -> mostrarMenus()); // Conecta el controlador (esto agrega el listener)
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
@@ -124,6 +163,9 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
     private void mostrarListaClientes() {
         mainPanel.removeAll();
         ListaClientesPanel panel = new ListaClientesPanel();
+            // Aquí debes cargar los clientes:
+        List<Cliente> clientes = ClienteController.listarClientes();
+        panel.setClientes(clientes);
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
