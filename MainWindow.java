@@ -143,28 +143,68 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         mainPanel.repaint(); // Repinta el panel
     }
 
-    // Muestra el panel de baja de cliente
     private void mostrarBajaClientePanel() {
         mainPanel.removeAll(); // Limpia el panel principal
         BajaClientePanel panel = new BajaClientePanel(); // Crea el panel de baja de cliente
-
-        // Agrega el listener para el botón eliminar
+        panel.cargarClientes(); // Carga los clientes en el combo
         panel.setEliminarListener(e -> {
-            int id = Integer.parseInt(panel.getId());
+            String idStr = panel.getId();
+            if (idStr.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "Debe ingresar un ID de cliente.");
+                return;
+            }
+            int id;
+            try {
+                id = Integer.parseInt(idStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel, "ID inválido.");
+                return;
+            }
             boolean ok = Controller.ClienteController.bajaCliente(id);
             if (ok) {
                 JOptionPane.showMessageDialog(panel, "Cliente eliminado correctamente.");
                 panel.limpiarCampos();
+                panel.cargarClientes();
             } else {
                 JOptionPane.showMessageDialog(panel, "Error al eliminar cliente.");
             }
         });
-
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
     }
+    // Muestra el panel para dar de baja a un cliente existente
 
+    private void mostrarBajaClientePanel(int clienteId) {
+        mainPanel.removeAll();
+        BajaClientePanel panel = new BajaClientePanel();
+        panel.seleccionarClientePorId(clienteId);
+        panel.setEliminarListener(e -> {
+            String idStr = panel.getId();
+            if (idStr.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "Debe ingresar un ID de cliente.");
+                return;
+            }
+            int id;
+            try {
+                id = Integer.parseInt(idStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel, "ID inválido.");
+                return;
+            }
+            boolean ok = Controller.ClienteController.bajaCliente(id);
+            if (ok) {
+                JOptionPane.showMessageDialog(panel, "Cliente eliminado correctamente.");
+                panel.limpiarCampos();
+                panel.cargarClientes();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Error al eliminar cliente.");
+            }
+        });
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
 
     // Muestra el panel para modificar datos de un cliente existente
     private void mostrarModificarClientePanel() {
@@ -234,18 +274,6 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         mainPanel.repaint();
     }
 
-
-
-
-    private void mostrarBajaClientePanel(int clienteId) {
-        mainPanel.removeAll();
-        // Crea el panel de baja y selecciona el cliente por ID (deberás adaptar tu BajaClientePanel)
-        BajaClientePanel panel = new BajaClientePanel();
-        panel.seleccionarClientePorId(clienteId); // Método que debes implementar en tu panel
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
-    }
 
     // Muestra el panel de cambio de contraseña
     private void mostrarCambioContraPanel() {

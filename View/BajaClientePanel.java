@@ -105,7 +105,7 @@ public class BajaClientePanel extends JPanel {
     }
 
     // Carga la lista de clientes en el JComboBox.
-    private void cargarClientes() {
+    public void cargarClientes() {
         List<Cliente> clientes = ClienteController.listarClientes();
         clientesCombo.removeAllItems();
         for (Cliente c : clientes) {
@@ -149,4 +149,6 @@ public class BajaClientePanel extends JPanel {
             clientesCombo.setSelectedIndex(0);
         }
     }
+
+  
 }
