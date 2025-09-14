@@ -50,9 +50,23 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente"); // Opción para alta de cliente
         altaClienteItem.addActionListener(e -> mostrarAltaCliente()); // Muestra el panel de alta de cliente
         clientesMenu.add(altaClienteItem); // Añade la opción al menú
+        
+        JMenuItem modificarClienteItem = new JMenuItem("Modificar Cliente"); // Opción para modificar cliente
+        modificarClienteItem.addActionListener(e -> mostrarModificarClientePanel()); // Muestra el panel de modificar cliente
+        clientesMenu.add(modificarClienteItem); // Añade la opción al menú
+
+        JMenuItem buscarClienteItem = new JMenuItem("Buscar Cliente"); // Opción para buscar cliente
+        buscarClienteItem.addActionListener(e -> mostrarBuscarClientesPanel()); // Muestra el panel de buscar cliente
+        clientesMenu.add(buscarClienteItem); // Añade la opción al menú
+
         JMenuItem bajaClienteItem = new JMenuItem("Baja de Cliente"); // Opción para baja de cliente
         bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel()); // Muestra el panel de baja de cliente
         clientesMenu.add(bajaClienteItem); // Añade la opción al menú
+        JMenuItem listarClientesItem = new JMenuItem("Listar Clientes");
+        listarClientesItem.addActionListener(e -> mostrarListaClientes()); // Acción para listar clientes
+        clientesMenu.add(listarClientesItem);
+        menuBar.add(clientesMenu); // Añade el menú a la barra
+
 
         menuBar.add(clientesMenu); // Añade el menú a la barra
 
@@ -62,9 +76,6 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
 
         // Menú de reportes
         JMenu reportesMenu = new JMenu("Reportes"); // Crea menú "Reportes"
-        JMenuItem listarClientesItem = new JMenuItem("Listar Clientes");
-        listarClientesItem.addActionListener(e -> mostrarListaClientes()); // Acción para listar clientes
-        reportesMenu.add(listarClientesItem);
         menuBar.add(reportesMenu); // Añade el menú a la barra
 
         // Menú de sistema y su opción de cambio de contraseña
@@ -72,6 +83,13 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         JMenuItem cambioContraItem = new JMenuItem("Cambio de contraseña"); // Opción de cambio de contraseña
         cambioContraItem.addActionListener(e -> mostrarCambioContraPanel()); // Muestra el panel de cambio de contraseña
         sistemaMenu.add(cambioContraItem); // Añade la opción al menú
+        // Cerrar sesión
+        JMenuItem cerrarSesionItem = new JMenuItem("Cerrar sesión");
+        cerrarSesionItem.addActionListener(e -> {
+            setJMenuBar(null);   // Quita la barra de menú
+            mostrarLogin();      // Vuelve al login
+        });
+        sistemaMenu.add(cerrarSesionItem);
         menuBar.add(sistemaMenu); // Añade el menú a la barra
 
         setJMenuBar(menuBar); // Establece la barra de menú en la ventana
@@ -145,6 +163,88 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
         mainPanel.revalidate(); // Revalida la UI
         mainPanel.repaint(); // Repinta el panel
+    }
+
+
+    // Muestra el panel para modificar datos de un cliente existente
+    private void mostrarModificarClientePanel() {
+        mainPanel.removeAll(); // Limpia el panel principal
+        View.ModificarClientePanel panel = new View.ModificarClientePanel();
+        LogicaModificar(panel);
+    }
+
+    private void mostrarModificarClientePanel(int clienteId) {
+        mainPanel.removeAll();
+        // Crea un panel de modificación con datos del cliente (deberás crearlo si no existe)
+        ModificarClientePanel panel = new ModificarClientePanel(clienteId);
+        LogicaModificar(panel);
+    }
+
+    private void LogicaModificar(ModificarClientePanel panel) {
+        // Listener para el botón guardar
+        panel.setGuardarListener(e -> {
+            Model.Cliente clienteActualizado = panel.getClienteActualizado();
+            if (clienteActualizado == null) {
+                JOptionPane.showMessageDialog(panel, "Debe seleccionar un cliente.");
+                return;
+            }
+            boolean ok = Controller.ClienteController.modificarCliente(clienteActualizado);
+            if (ok) {
+                JOptionPane.showMessageDialog(panel, "Cliente modificado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(panel, "Error al modificar cliente.");
+            }
+        });
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    // Muestra el panel para buscar clientes por nombre o documento
+    private void mostrarBuscarClientesPanel() {
+        mainPanel.removeAll(); // Limpia el panel principal
+
+        View.BuscarClientesPanel panel = new View.BuscarClientesPanel();
+
+        // Listener para Modificar
+        panel.setModificarListener(e -> {
+            Integer id = panel.getClienteSeleccionadoId();
+            if (id != null) {
+                mostrarModificarClientePanel(id);
+            } else {
+                JOptionPane.showMessageDialog(panel, "Seleccione un cliente para modificar.");
+            }
+        });
+
+        // Listener para Eliminar
+        panel.setEliminarListener(e -> {
+            Integer id = panel.getClienteSeleccionadoId();
+            if (id != null) {
+                mostrarBajaClientePanel(id);
+            } else {
+                JOptionPane.showMessageDialog(panel, "Seleccione un cliente para eliminar.");
+            }
+        });
+
+        // (Puedes sumar el resto de listeners aquí...)
+
+        mainPanel.add(panel, BorderLayout.CENTER);
+
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+
+
+
+    private void mostrarBajaClientePanel(int clienteId) {
+        mainPanel.removeAll();
+        // Crea el panel de baja y selecciona el cliente por ID (deberás adaptar tu BajaClientePanel)
+        BajaClientePanel panel = new BajaClientePanel();
+        panel.seleccionarClientePorId(clienteId); // Método que debes implementar en tu panel
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     // Muestra el panel de cambio de contraseña

@@ -62,6 +62,7 @@ public class LoginPanel extends JPanel { // Panel de login de usuario
 
         // Agrega el evento al botón para validar el login
         loginBtn.addActionListener(e -> validarLogin());
+        passwordField.addActionListener(e -> validarLogin()); // También valida al presionar Enter
     }
 
     // Método privado para validar la contraseña ingresada

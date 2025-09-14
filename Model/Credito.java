@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Modelo para un crédito otorgado a un cliente.
+ * Modelo para un crédito otorgado a un cliente. 
  */
 public class Credito {
     private int id;

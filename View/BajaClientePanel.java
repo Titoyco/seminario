@@ -8,28 +8,28 @@ import Controller.ClienteController;
 
 /**
  * Panel para dar de baja un cliente, permite seleccionar de una lista o ingresar el ID manualmente.
+ * Si el constructor recibe un id, el combo muestra ese cliente como seleccionado.
  */
 public class BajaClientePanel extends JPanel {
 
-    // Botón para eliminar cliente
     private JButton eliminarBtn;
-    // Campo para ingresar el ID del cliente manualmente
     private JTextField idField;
-    // ComboBox para seleccionar el cliente por nombre
     private JComboBox<Cliente> clientesCombo;
 
-    // Constructor del panel de baja de cliente
+    // Constructor para baja general (combo, primer cliente seleccionado)
     public BajaClientePanel() {
-        // Fondo suave y moderno
-        setBackground(new Color(245, 249, 255));
+        this(-1); // Llama al constructor principal sin selección específica
+    }
 
-        // Usa GridBagLayout para diseño flexible
+    // Constructor para baja de un cliente específico (combo, muestra cliente con el id pasado)
+    public BajaClientePanel(int clienteId) {
+        setBackground(new Color(245, 249, 255));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(12, 18, 12, 18);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título del panel
+        // Título
         JLabel titulo = new JLabel("Baja de Cliente");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titulo.setForeground(new Color(56, 81, 145));
@@ -45,7 +45,7 @@ public class BajaClientePanel extends JPanel {
         add(comboLabel, gbc);
 
         clientesCombo = new JComboBox<>();
-        cargarClientes(); // Llena el combo con la lista de clientes existente
+        cargarClientes(); // Carga la lista de clientes en el combo
         clientesCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         gbc.gridx = 1; gbc.gridy = 1;
         add(clientesCombo, gbc);
@@ -62,6 +62,7 @@ public class BajaClientePanel extends JPanel {
         idField.setForeground(new Color(56, 81, 145));
         idField.setBackground(Color.WHITE);
         idField.setPreferredSize(new Dimension(300, 30));
+        idField.setEditable(false);
         gbc.gridx = 1; gbc.gridy = 2;
         add(idField, gbc);
 
@@ -70,8 +71,20 @@ public class BajaClientePanel extends JPanel {
             Cliente seleccionado = (Cliente) clientesCombo.getSelectedItem();
             if (seleccionado != null) {
                 idField.setText(String.valueOf(seleccionado.getId()));
+            } else {
+                idField.setText("");
             }
         });
+
+        // Selección inicial del combo
+        if (clientesCombo.getItemCount() > 0) {
+            if (clienteId > 0) {
+                seleccionarClientePorId(clienteId);
+            } else {
+                clientesCombo.setSelectedIndex(0);
+            }
+            // Esto dispara el listener y setea el campo idField
+        }
 
         //----- Botón Eliminar -----
         eliminarBtn = new JButton("Eliminar");
@@ -100,7 +113,7 @@ public class BajaClientePanel extends JPanel {
         }
     }
 
-    // Devuelve el ID ingresado en el campo de texto.
+    // Devuelve el ID mostrado en el campo de texto.
     public String getId() {
         return idField.getText().trim();
     }
@@ -110,9 +123,30 @@ public class BajaClientePanel extends JPanel {
         eliminarBtn.addActionListener(listener);
     }
 
-    // Limpia los campos del panel (campo de ID y selección del combo).
+    // Limpia los campos del panel (campo de ID y combo).
     public void limpiarCampos() {
+        if (clientesCombo.getItemCount() > 0) {
+            clientesCombo.setSelectedIndex(0);
+        }
         idField.setText("");
-        clientesCombo.setSelectedIndex(-1);
+    }
+
+    /**
+     * Selecciona en el combo el cliente con el id dado (si existe).
+     * También actualiza el campo de ID.
+     */
+    public void seleccionarClientePorId(int clienteId) {
+        for (int i = 0; i < clientesCombo.getItemCount(); i++) {
+            Cliente c = clientesCombo.getItemAt(i);
+            if (c.getId() == clienteId) {
+                clientesCombo.setSelectedIndex(i);
+                idField.setText(String.valueOf(clienteId));
+                return;
+            }
+        }
+        // Si no lo encuentra, selecciona el primero
+        if (clientesCombo.getItemCount() > 0) {
+            clientesCombo.setSelectedIndex(0);
+        }
     }
 }
