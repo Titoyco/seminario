@@ -1,52 +1,54 @@
 package Model;
 
-import java.time.LocalDate;
-
 /**
- * Modelo para una cuota de un crédito.
+ * Modelo adaptado al esquema actual:
+ * Tabla cuotas: id, id_credito, numero, monto, estado (pendiente|pagada|mora)
+ * No existe fecha_vencimiento ni campo pagada en DB.
+ * El vencimiento real se deriva: lote_vencimiento = credito.lote_origen + numero.
  */
 public class Cuota {
     private int id;
     private int idCredito;
-    private int nroCuota;
+    private int numero;
     private double monto;
-    private LocalDate fechaVencimiento;
-    private boolean pagada;
+    private String estado; // 'pendiente','pagada','mora'
 
-    // Constructor completo
-    public Cuota(int id, int idCredito, int nroCuota, double monto, LocalDate fechaVencimiento, boolean pagada) {
+    public Cuota(int id, int idCredito, int numero, double monto, String estado) {
         this.id = id;
         this.idCredito = idCredito;
-        this.nroCuota = nroCuota;
+        this.numero = numero;
         this.monto = monto;
-        this.fechaVencimiento = fechaVencimiento;
-        this.pagada = pagada;
+        this.estado = estado;
     }
 
-    // Constructor sin id (usado para crear nuevas cuotas)
-    public Cuota(int idCredito, int nroCuota, double monto, LocalDate fechaVencimiento, boolean pagada) {
+    // Constructor para crear antes de insertar
+    public Cuota(int idCredito, int numero, double monto) {
         this.idCredito = idCredito;
-        this.nroCuota = nroCuota;
+        this.numero = numero;
         this.monto = monto;
-        this.fechaVencimiento = fechaVencimiento;
-        this.pagada = pagada;
+        this.estado = "pendiente";
     }
 
-    // Getters
     public int getId() { return id; }
     public int getIdCredito() { return idCredito; }
-    public int getNroCuota() { return nroCuota; }
+    public int getNumero() { return numero; }
     public double getMonto() { return monto; }
-    public LocalDate getFechaVencimiento() { return fechaVencimiento; }
-    public boolean isPagada() { return pagada; }
+    public String getEstado() { return estado; }
 
-    // Setters
-    public void setPagada(boolean pagada) { this.pagada = pagada; }
+    public boolean isPagada() { return "pagada".equalsIgnoreCase(estado); }
+    public boolean isMora() { return "mora".equalsIgnoreCase(estado); }
+    public boolean isPendiente() { return "pendiente".equalsIgnoreCase(estado); }
+
+    public void setEstado(String estado) { this.estado = estado; }
     public void setId(int id) { this.id = id; }
 
-    // Para mostrar en listas/tablas
     @Override
     public String toString() {
-        return "Cuota #" + nroCuota + " - $" + monto + " - Vence: " + fechaVencimiento + (pagada ? " (Pagada)" : " (Pendiente)");
+        return "Cuota #" + numero + " $" + monto + " [" + estado + "]";
+    }
+
+    // Deriva el lote de vencimiento en base al lote_origen del crédito:
+    public int loteVencimiento(int loteOrigenCredito) {
+        return loteOrigenCredito + numero;
     }
 }

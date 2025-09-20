@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 20-09-2025 a las 23:34:36
+-- Tiempo de generación: 20-09-2025 a las 23:53:05
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `documento` (`documento`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `clientes`
@@ -74,8 +74,8 @@ INSERT INTO `clientes` (`id`, `nombre`, `documento`, `direccion`, `telefono`, `e
 (28, 'Natalia Cabrera', '46474849', 'San Juan 110', '1199001343', 'natalia.cabrera@mail.com'),
 (29, 'Matías Rivas', '48495051', 'La Rioja 300', '1100112454', 'matias.rivas@mail.com'),
 (30, 'Rocío Funes', '50515253', 'Salta 222', '1111223565', 'rocio.funes@mail.com'),
-(34, 'vamos otro', '99999', '8888', '7777', '66666'),
-(33, 'nuevo', '132123', 'ppasp', '123', 'asdqw@ads.com');
+(33, 'nuevo', '132123', 'ppasp', '123', 'asdqw@ads.com'),
+(34, 'vamos otro', '99999', '8888', '7777', '66666');
 
 -- --------------------------------------------------------
 
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `creditos` (
   PRIMARY KEY (`id`),
   KEY `id_cliente` (`id_cliente`),
   KEY `lote_origen` (`lote_origen`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `creditos`
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   `estado` enum('pendiente','pagada','mora') COLLATE utf8mb4_unicode_ci DEFAULT 'pendiente',
   PRIMARY KEY (`id`),
   KEY `id_credito` (`id_credito`)
-) ENGINE=MyISAM AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `cuotas`
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `lotes` (
   `fecha_apertura` date NOT NULL,
   `fecha_cierre` date DEFAULT NULL,
   PRIMARY KEY (`nro_lote`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `lotes`
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `observaciones` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_cuota` (`id_cuota`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `variables` (
   `nro_credito` int DEFAULT '0',
   `nro_lote` int DEFAULT '0',
   `interes_mensual` decimal(2,2) NOT NULL DEFAULT '0.00'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `variables`
@@ -276,6 +276,16 @@ CREATE TABLE IF NOT EXISTS `variables` (
 
 INSERT INTO `variables` (`pass`, `master_pass`, `nro_credito`, `nro_lote`, `interes_mensual`) VALUES
 ('admin', 'master', 20, 4, 0.05);
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `lotes`
+--
+ALTER TABLE `lotes`
+  ADD CONSTRAINT `lotes_ibfk_1` FOREIGN KEY (`nro_lote`) REFERENCES `creditos` (`lote_origen`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
