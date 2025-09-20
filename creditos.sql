@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 20-09-2025 a las 23:53:05
+-- Tiempo de generación: 20-09-2025 a las 23:56:30
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -94,9 +94,9 @@ CREATE TABLE IF NOT EXISTS `creditos` (
   `estado` enum('vigente','cancelado','mora') COLLATE utf8mb4_unicode_ci DEFAULT 'vigente',
   `lote_origen` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `lote_origen` (`lote_origen`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `fk_creditos_cliente` (`id_cliente`),
+  KEY `fk_creditos_lote` (`lote_origen`)
+) ;
 
 --
 -- Volcado de datos para la tabla `creditos`
@@ -138,8 +138,8 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   `monto` decimal(12,2) NOT NULL,
   `estado` enum('pendiente','pagada','mora') COLLATE utf8mb4_unicode_ci DEFAULT 'pendiente',
   PRIMARY KEY (`id`),
-  KEY `id_credito` (`id_credito`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `uq_cuota_credito_numero` (`id_credito`,`numero`)
+) ;
 
 --
 -- Volcado de datos para la tabla `cuotas`
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `observaciones` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_cuota` (`id_cuota`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -263,29 +263,32 @@ INSERT INTO `pagos` (`id`, `id_cuota`, `fecha_pago`, `monto_pagado`, `metodo_pag
 
 DROP TABLE IF EXISTS `variables`;
 CREATE TABLE IF NOT EXISTS `variables` (
+  `id` tinyint NOT NULL DEFAULT '1',
   `pass` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `master_pass` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `nro_credito` int DEFAULT '0',
   `nro_lote` int DEFAULT '0',
-  `interes_mensual` decimal(2,2) NOT NULL DEFAULT '0.00'
+  `interes_mensual` decimal(8,4) NOT NULL DEFAULT '0.0000',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `variables`
 --
 
-INSERT INTO `variables` (`pass`, `master_pass`, `nro_credito`, `nro_lote`, `interes_mensual`) VALUES
-('admin', 'master', 20, 4, 0.05);
+INSERT INTO `variables` (`id`, `pass`, `master_pass`, `nro_credito`, `nro_lote`, `interes_mensual`) VALUES
+(1, 'admin', 'master', 20, 4, 0.0500);
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
--- Filtros para la tabla `lotes`
+-- Filtros para la tabla `creditos`
 --
-ALTER TABLE `lotes`
-  ADD CONSTRAINT `lotes_ibfk_1` FOREIGN KEY (`nro_lote`) REFERENCES `creditos` (`lote_origen`) ON DELETE CASCADE;
+ALTER TABLE `creditos`
+  ADD CONSTRAINT `fk_creditos_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_creditos_lote` FOREIGN KEY (`lote_origen`) REFERENCES `lotes` (`nro_lote`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
