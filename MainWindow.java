@@ -143,42 +143,26 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
         mainPanel.repaint(); // Repinta el panel
     }
 
-    private void mostrarBajaClientePanel() {
-        mainPanel.removeAll(); // Limpia el panel principal
-        BajaClientePanel panel = new BajaClientePanel(); // Crea el panel de baja de cliente
-        panel.cargarClientes(); // Carga los clientes en el combo
-        panel.setEliminarListener(e -> {
-            String idStr = panel.getId();
-            if (idStr.isEmpty()) {
-                JOptionPane.showMessageDialog(panel, "Debe ingresar un ID de cliente.");
-                return;
-            }
-            int id;
-            try {
-                id = Integer.parseInt(idStr);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(panel, "ID inválido.");
-                return;
-            }
-            boolean ok = Controller.ClienteController.bajaCliente(id);
-            if (ok) {
-                JOptionPane.showMessageDialog(panel, "Cliente eliminado correctamente.");
-                panel.limpiarCampos();
-                panel.cargarClientes();
-            } else {
-                JOptionPane.showMessageDialog(panel, "Error al eliminar cliente.");
-            }
-        });
-        mainPanel.add(panel, BorderLayout.CENTER); // Agrega el panel al centro
-        mainPanel.revalidate(); // Revalida la UI
-        mainPanel.repaint(); // Repinta el panel
-    }
-    // Muestra el panel para dar de baja a un cliente existente
+    private void mostrarBajaClientePanel() { // Muestra el panel para eliminar un cliente existente
+        mainPanel.removeAll();
+        BajaClientePanel panel = new BajaClientePanel();
+        panel.cargarClientes();
+        logicaBajaCliente(panel);
 
-    private void mostrarBajaClientePanel(int clienteId) {
+    }
+
+    private void mostrarBajaClientePanel(int clienteId) { // Muestra el panel para eliminar un cliente existente
         mainPanel.removeAll();
         BajaClientePanel panel = new BajaClientePanel();
         panel.seleccionarClientePorId(clienteId);
+        logicaBajaCliente(panel);
+
+    }
+
+    /**
+     * Unifica la lógica del listener de eliminación de cliente.
+     */
+    private void logicaBajaCliente(BajaClientePanel panel) {
         panel.setEliminarListener(e -> {
             String idStr = panel.getId();
             if (idStr.isEmpty()) {
@@ -208,7 +192,7 @@ public class MainWindow extends JFrame { // Clase principal de la ventana
 
     // Muestra el panel para modificar datos de un cliente existente
     private void mostrarModificarClientePanel() {
-        mainPanel.removeAll(); // Limpia el panel principal
+    mainPanel.removeAll(); // Limpia el panel principal
         View.ModificarClientePanel panel = new View.ModificarClientePanel();
         LogicaModificar(panel);
     }

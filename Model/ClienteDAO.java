@@ -4,27 +4,6 @@ import java.util.*;
 
 public class ClienteDAO {
 
-    public static boolean insertar(String nombre, String documento, String direccion, String telefono, String email) {
-        String sql = "INSERT INTO clientes (nombre, documento, direccion, telefono, email) VALUES (?, ?, ?, ?, ?)";
-
-        try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, nombre);
-            ps.setString(2, documento);
-            ps.setString(3, direccion);
-            ps.setString(4, telefono);
-            ps.setString(5, email);
-
-            int filas = ps.executeUpdate();
-            return filas > 0;
-        } catch (SQLException e) {
-            System.out.println("Error al insertar cliente: " + e.getMessage());
-        }
-        return false;
-    }
-
-
         public static boolean insertar(Cliente cliente) {
         String sql = "INSERT INTO clientes (nombre, documento, direccion, telefono, email) VALUES (?, ?, ?, ?, ?)";
 
