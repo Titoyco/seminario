@@ -1,19 +1,21 @@
 package Controller;
 
+import Model.Lote;
 import Model.LoteDAO;
 
 import java.time.LocalDate;
 
-/**
- * Controlador para operaciones sobre lotes.
- */
 public class LoteController {
 
-    public static boolean abrirNuevoLote(LocalDate fechaApertura) {
-        return LoteDAO.abrirNuevoLote(fechaApertura);
+    public static Lote obtenerLoteActual() {
+        return LoteDAO.getLoteActual();
     }
 
-    public static boolean cerrarLote(int nroLote, LocalDate fechaCierre) {
-        return LoteDAO.cerrarLote(nroLote, fechaCierre);
+    /**
+     * Cierra el lote actual y crea el siguiente automáticamente.
+     * Usa la fecha de hoy tanto para el cierre como para la apertura del nuevo (puedes separar si querés).
+     */
+    public static boolean cerrarYCrearSiguiente(LocalDate fechaCierre, LocalDate fechaAperturaNuevo) {
+        return LoteDAO.cerrarLoteActualYCrearNuevo(fechaCierre, fechaAperturaNuevo);
     }
 }

@@ -2,82 +2,97 @@ package Model;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * DAO para la tabla 'lotes'.
- * Maneja apertura y cierre. En cierre dispara el marcado de mora de cuotas.
- */
 public class LoteDAO {
 
-    public static boolean abrirNuevoLote(LocalDate fechaApertura) {
-        Integer loteActual = VariablesDAO.getNroLote();
-        if (loteActual == null) return false;
-        int nuevo = loteActual + 1;
+    private static Lote map(ResultSet rs) throws SQLException {
+        return new Lote(
+            rs.getInt("nro_lote"),
+            rs.getDate("fecha_apertura").toLocalDate(),
+            rs.getDate("fecha_cierre") != null ? rs.getDate("fecha_cierre").toLocalDate() : null
+        );
+    }
 
-        String sqlInsert = "INSERT INTO lotes (nro_lote, fecha_apertura) VALUES (?,?)";
+    // Obtiene el lote actual (el que coincide con variables.nro_lote)
+    public static Lote getLoteActual() {
+        String sql = "SELECT l.* FROM lotes l JOIN variables v ON l.nro_lote = v.nro_lote LIMIT 1";
         try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
-            ps.setInt(1, nuevo);
-            ps.setDate(2, Date.valueOf(fechaApertura));
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                if (VariablesDAO.setNroLote(nuevo)) {
-                    return true;
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return map(rs);
+        } catch (SQLException e) {
+            System.out.println("Error getLoteActual: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Cierra el lote actual (fecha_cierre) y crea automáticamente el siguiente lote
+     * marcando en mora las cuotas pendientes vencidas.
+     * Proceso en una transacción:
+     *   1) Obtener nro_lote actual (variables)
+     *   2) UPDATE lotes set fecha_cierre
+     *   3) Marcar cuotas mora (cr.lote_origen + numero = lote_cerrado)
+     *   4) INSERT nuevo lote (nro_lote + 1, fecha_apertura = fechaAperturaNuevo)
+     *   5) UPDATE variables.nro_lote
+     */
+    public static boolean cerrarLoteActualYCrearNuevo(LocalDate fechaCierre, LocalDate fechaAperturaNuevo) {
+        String selectVar = "SELECT nro_lote FROM variables LIMIT 1";
+        String cerrar = "UPDATE lotes SET fecha_cierre=? WHERE nro_lote=? AND fecha_cierre IS NULL";
+        String mora = "UPDATE cuotas cu " +
+                      "JOIN creditos cr ON cr.id = cu.id_credito " +
+                      "SET cu.estado='mora' " +
+                      "WHERE cu.estado='pendiente' AND (cr.lote_origen + cu.numero)=?";
+        String insertNuevo = "INSERT INTO lotes (nro_lote, fecha_apertura) VALUES (?,?)";
+        String updateVar = "UPDATE variables SET nro_lote=? WHERE id=1";
+
+        try (Connection conn = ConexionMySQL.getConnection()) {
+            conn.setAutoCommit(false);
+
+            int loteActual;
+            try (PreparedStatement psSel = conn.prepareStatement(selectVar);
+                 ResultSet rs = psSel.executeQuery()) {
+                if (!rs.next()) throw new SQLException("No se encontró fila en variables.");
+                loteActual = rs.getInt(1);
+            }
+
+            // Cerrar lote actual
+            try (PreparedStatement psCerrar = conn.prepareStatement(cerrar)) {
+                psCerrar.setDate(1, Date.valueOf(fechaCierre));
+                psCerrar.setInt(2, loteActual);
+                int updated = psCerrar.executeUpdate();
+                if (updated == 0) {
+                    throw new SQLException("El lote actual ya estaba cerrado o no existe.");
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Error abrirNuevoLote: " + e.getMessage());
-        }
-        return false;
-    }
 
-    public static boolean cerrarLote(int nroLote, LocalDate fechaCierre) {
-        // 1) Cerrar lote (si no está cerrado)
-        String sql = "UPDATE lotes SET fecha_cierre = ? WHERE nro_lote = ? AND fecha_cierre IS NULL";
-        try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1, Date.valueOf(fechaCierre));
-            ps.setInt(2, nroLote);
-            int updated = ps.executeUpdate();
-            // updated puede ser 0 si ya estaba cerrado o no existe
-        } catch (SQLException e) {
-            System.out.println("Error cerrarLote: " + e.getMessage());
-            return false;
-        }
-
-        // 2) Marcar cuotas en mora cuyo lote_vencimiento == nroLote
-        return CuotaDAO.marcarMoraPorLoteCerrado(nroLote);
-    }
-
-    public static boolean loteEstaCerrado(int nroLote) {
-        String sql = "SELECT fecha_cierre FROM lotes WHERE nro_lote = ?";
-        try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, nroLote);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Date fc = rs.getDate("fecha_cierre");
-                    return fc != null;
-                }
+            // Marcar cuotas en mora
+            try (PreparedStatement psMora = conn.prepareStatement(mora)) {
+                psMora.setInt(1, loteActual);
+                psMora.executeUpdate();
             }
+
+            int nuevoLote = loteActual + 1;
+
+            // Crear nuevo lote
+            try (PreparedStatement psNuevo = conn.prepareStatement(insertNuevo)) {
+                psNuevo.setInt(1, nuevoLote);
+                psNuevo.setDate(2, Date.valueOf(fechaAperturaNuevo));
+                psNuevo.executeUpdate();
+            }
+
+            // Actualizar variables
+            try (PreparedStatement psUpd = conn.prepareStatement(updateVar)) {
+                psUpd.setInt(1, nuevoLote);
+                psUpd.executeUpdate();
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
+            return true;
         } catch (SQLException e) {
-            System.out.println("Error loteEstaCerrado: " + e.getMessage());
+            System.out.println("Error cerrarLoteActualYCrearNuevo: " + e.getMessage());
         }
         return false;
-    }
-
-    public static List<Integer> lotesAbiertos() {
-        List<Integer> list = new ArrayList<>();
-        String sql = "SELECT nro_lote FROM lotes WHERE fecha_cierre IS NULL ORDER BY nro_lote";
-        try (Connection conn = ConexionMySQL.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) list.add(rs.getInt(1));
-        } catch (SQLException e) {
-            System.out.println("Error lotesAbiertos: " + e.getMessage());
-        }
-        return list;
     }
 }

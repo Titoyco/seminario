@@ -6,34 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO para la tabla 'creditos' (schema actual).
- * Mapea a modelo Credito (monto -> montoTotal, fecha_otorgado -> fechaOtorgamiento).
+ * DAO para la tabla 'creditos'.
+ * Usa transacciones InnoDB para crear crédito + cuotas atómicamente.
  */
 public class CreditoDAO {
 
-    public static int insertar(Credito c, int loteOrigen) {
-        String sql = "INSERT INTO creditos (id_cliente, monto, fecha_otorgado, tasa_interes, cantidad_cuotas, estado, lote_origen) " +
-                     "VALUES (?,?,?,?,?,'vigente',?)";
-        try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setInt(1, c.getIdCliente());
-            ps.setDouble(2, c.getMontoTotal());
-            ps.setDate(3, Date.valueOf(c.getFechaOtorgamiento()));
-            ps.setDouble(4, c.getTasaInteres());
-            ps.setInt(5, c.getCantidadCuotas());
-            ps.setInt(6, loteOrigen);
-
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error insertar crédito: " + e.getMessage());
-        }
-        return -1;
+    private static Credito map(ResultSet rs) throws SQLException {
+        return new Credito(
+            rs.getInt("id"),
+            rs.getInt("id_cliente"),
+            rs.getDouble("monto"),
+            rs.getDouble("tasa_interes"),
+            rs.getInt("cantidad_cuotas"),
+            rs.getDate("fecha_otorgado").toLocalDate(),
+            null
+        );
     }
 
     public static Credito buscarPorId(int id) {
@@ -60,7 +47,7 @@ public class CreditoDAO {
                 while (rs.next()) list.add(map(rs));
             }
         } catch (SQLException e) {
-            System.out.println("Error listarPorCliente: " + e.getMessage());
+            System.out.println("Error listar créditos cliente: " + e.getMessage());
         }
         return list;
     }
@@ -73,7 +60,7 @@ public class CreditoDAO {
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) list.add(map(rs));
         } catch (SQLException e) {
-            System.out.println("Error listarTodos: " + e.getMessage());
+            System.out.println("Error listar créditos: " + e.getMessage());
         }
         return list;
     }
@@ -86,20 +73,57 @@ public class CreditoDAO {
             ps.setInt(2, idCredito);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Error actualizarEstado crédito: " + e.getMessage());
+            System.out.println("Error actualizar estado crédito: " + e.getMessage());
         }
         return false;
     }
 
-    private static Credito map(ResultSet rs) throws SQLException {
-        return new Credito(
-            rs.getInt("id"),
-            rs.getInt("id_cliente"),
-            rs.getDouble("monto"),
-            rs.getDouble("tasa_interes"),
-            rs.getInt("cantidad_cuotas"),
-            rs.getDate("fecha_otorgado").toLocalDate(),
-            null
-        );
+    /**
+     * Crea un crédito y sus cuotas en una sola transacción.
+     * @param credito modelo sin id
+     * @param cuotas lista de cuotas (sin id) generadas previamente
+     * @param loteOrigen lote actual (ya obtenido de variables)
+     * @return id generado o -1 si falla
+     */
+    public static int crearCreditoConCuotas(Credito credito, List<Cuota> cuotas, int loteOrigen) {
+        String sqlCredito = "INSERT INTO creditos (id_cliente, monto, fecha_otorgado, tasa_interes, cantidad_cuotas, estado, lote_origen) " +
+                            "VALUES (?,?,?,?,?,'vigente',?)";
+        String sqlCuota = "INSERT INTO cuotas (id_credito, numero, monto, estado) VALUES (?,?,?,'pendiente')";
+
+        try (Connection conn = ConexionMySQL.getConnection()) {
+            conn.setAutoCommit(false);
+
+            int idCreditoGenerado;
+            try (PreparedStatement ps = conn.prepareStatement(sqlCredito, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, credito.getIdCliente());
+                ps.setDouble(2, credito.getMontoTotal());
+                ps.setDate(3, Date.valueOf(credito.getFechaOtorgamiento()));
+                ps.setDouble(4, credito.getTasaInteres());
+                ps.setInt(5, credito.getCantidadCuotas());
+                ps.setInt(6, loteOrigen);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (!rs.next()) throw new SQLException("No se obtuvo ID de crédito.");
+                    idCreditoGenerado = rs.getInt(1);
+                }
+            }
+
+            try (PreparedStatement psCuota = conn.prepareStatement(sqlCuota)) {
+                for (Cuota c : cuotas) {
+                    psCuota.setInt(1, idCreditoGenerado);
+                    psCuota.setInt(2, c.getNumero());
+                    psCuota.setDouble(3, c.getMonto());
+                    psCuota.addBatch();
+                }
+                psCuota.executeBatch();
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
+            return idCreditoGenerado;
+        } catch (SQLException e) {
+            System.out.println("Error transaccional crear crédito: " + e.getMessage());
+        }
+        return -1;
     }
 }
