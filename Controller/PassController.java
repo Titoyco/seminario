@@ -1,9 +1,10 @@
 package Controller;
 
 import View.PassPanel;
-import Model.VariablesDAO;
 
 import javax.swing.*;
+
+import Dao.VariablesDAO;
 
 public class PassController {
 

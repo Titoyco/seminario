@@ -1,7 +1,9 @@
-package Model;
+package Dao;
 
 import java.sql.*;
 import java.time.LocalDate;
+
+import Model.ConexionMySQL;
 
 /**
  * DAO para registrar pagos. Marca la cuota como pagada (no contempla pagos parciales todavía).

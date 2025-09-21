@@ -1,9 +1,13 @@
-package Model;
+package Dao;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import Model.ConexionMySQL;
+import Model.Credito;
+import Model.Cuota;
 
 /**
  * DAO para la tabla 'creditos'.
@@ -19,6 +23,8 @@ public class CreditoDAO {
             rs.getDouble("tasa_interes"),
             rs.getInt("cantidad_cuotas"),
             rs.getDate("fecha_otorgado").toLocalDate(),
+            rs.getString("estado"),
+            rs.getInt("lote_origen"),
             null
         );
     }
@@ -78,13 +84,6 @@ public class CreditoDAO {
         return false;
     }
 
-    /**
-     * Crea un crédito y sus cuotas en una sola transacción.
-     * @param credito modelo sin id
-     * @param cuotas lista de cuotas (sin id) generadas previamente
-     * @param loteOrigen lote actual (ya obtenido de variables)
-     * @return id generado o -1 si falla
-     */
     public static int crearCreditoConCuotas(Credito credito, List<Cuota> cuotas, int loteOrigen) {
         String sqlCredito = "INSERT INTO creditos (id_cliente, monto, fecha_otorgado, tasa_interes, cantidad_cuotas, estado, lote_origen) " +
                             "VALUES (?,?,?,?,?,'vigente',?)";

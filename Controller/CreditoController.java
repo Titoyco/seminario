@@ -6,6 +6,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import Dao.CreditoDAO;
+import Dao.CuotaDAO;
+import Dao.VariablesDAO;
+
 /**
  * Lógica de negocio para creación de créditos.
  * Cuotas simples (monto / cantidad) con ajuste de redondeo en la última.

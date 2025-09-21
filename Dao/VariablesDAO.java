@@ -1,9 +1,13 @@
-package Model;
+package Dao;
 import java.sql.*;
 
+import Model.ConexionMySQL;
+import Model.Variables;
+
 /**
- * DAO para la tabla 'variables'. Asume UNA sola fila.
- * NOTA: Con ENGINE=MyISAM no hay transacciones ni bloqueo seguro: cuidado con concurrencia.
+ * DAO para la tabla 'variables'.
+ * Ahora la base está en InnoDB, por lo que operaciones son transaccionales si se agrupan en una misma conexión.
+ * Se asume UNA sola fila (id=1).
  */
 public class VariablesDAO {
 

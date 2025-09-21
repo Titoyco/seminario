@@ -1,9 +1,10 @@
 package Controller;
 
 import Model.Lote;
-import Model.LoteDAO;
 
 import java.time.LocalDate;
+
+import Dao.LoteDAO;
 
 public class LoteController {
 

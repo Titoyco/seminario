@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import Controller.*;
+import Dao.CuotaDAO;
+import Dao.PagoDAO;
 import Model.*;
 import View.*;
 

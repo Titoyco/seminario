@@ -1,8 +1,11 @@
-package Model;
+package Dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import Model.ConexionMySQL;
+import Model.Cuota;
 
 public class CuotaDAO {
 

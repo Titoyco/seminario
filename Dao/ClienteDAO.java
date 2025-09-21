@@ -1,6 +1,9 @@
-package Model;
+package Dao;
 import java.sql.*;
 import java.util.*;
+
+import Model.Cliente;
+import Model.ConexionMySQL;
 
 public class ClienteDAO {
 

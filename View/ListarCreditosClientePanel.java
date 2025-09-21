@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Panel que permite seleccionar un cliente y ver sus créditos y las cuotas
- * del crédito seleccionado.
+ * del crédito seleccionado, mostrando estado y lote_origen reales.
  */
 public class ListarCreditosClientePanel extends JPanel {
 
@@ -39,12 +39,12 @@ public class ListarCreditosClientePanel extends JPanel {
 
         add(top, BorderLayout.NORTH);
 
-        modeloCreditos = new DefaultTableModel(new Object[]{"ID","Monto","Tasa%","Cuotas","Fecha","Estado","Lote"},0){
+        modeloCreditos = new DefaultTableModel(new Object[]{"ID","Monto","Tasa%","Cuotas","Fecha","Estado","Lote Origen"},0){
             public boolean isCellEditable(int r,int c){return false;}
         };
         tablaCreditos = new JTable(modeloCreditos);
 
-        modeloCuotas = new DefaultTableModel(new Object[]{"#","Monto","Estado","Lote Venc."},0){
+        modeloCuotas = new DefaultTableModel(new Object[]{"#","Monto","Estado","Lote Vencimiento"},0){
             public boolean isCellEditable(int r,int c){return false;}
         };
         tablaCuotas = new JTable(modeloCuotas);
@@ -58,9 +58,7 @@ public class ListarCreditosClientePanel extends JPanel {
         cargarBtn.addActionListener(e -> cargarCreditos());
 
         tablaCreditos.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                cargarCuotasSeleccion();
-            }
+            if (!e.getValueIsAdjusting()) cargarCuotasSeleccion();
         });
     }
 
@@ -77,36 +75,33 @@ public class ListarCreditosClientePanel extends JPanel {
         if (c == null) return;
         List<Credito> creditos = CreditoController.listarPorCliente(c.getId());
         for (Credito cr : creditos) {
-            // Necesitamos lote_origen para cálculo de lote vencimiento en cuotas.
-            // Como no está en el modelo Credito (tu modelo original), podrías extenderlo luego.
-            // Por ahora realizaremos un fetch directo si se añade columna al modelo.
-            // Temporalmente lo dejamos como '?'
             modeloCreditos.addRow(new Object[]{
                     cr.getId(),
                     cr.getMontoTotal(),
                     cr.getTasaInteres(),
                     cr.getCantidadCuotas(),
                     cr.getFechaOtorgamiento(),
-                    "?", // estado (tu modelo no lo tiene)
-                    "?"  // lote_origen (tu modelo no lo tiene)
+                    cr.getEstado(),
+                    cr.getLoteOrigen()
             });
         }
+        modeloCuotas.setRowCount(0);
     }
 
     private void cargarCuotasSeleccion() {
         modeloCuotas.setRowCount(0);
         int fila = tablaCreditos.getSelectedRow();
         if (fila < 0) return;
-        Object val = tablaCreditos.getValueAt(fila, 0);
-        int idCredito = Integer.parseInt(val.toString());
+        int idCredito = Integer.parseInt(tablaCreditos.getValueAt(fila, 0).toString());
+        int loteOrigen = Integer.parseInt(tablaCreditos.getValueAt(fila, 6).toString());
         List<Cuota> cuotas = CreditoController.listarCuotasCredito(idCredito);
-        // Necesitamos el lote_origen para calcular lote de vencimiento, no está en Credito (pendiente extender modelo)
-        int loteOrigen = -1;
         for (Cuota cu : cuotas) {
-            int loteVenc = (loteOrigen >= 0) ? (loteOrigen + cu.getNumero()) : -1;
+            int loteVenc = loteOrigen + cu.getNumero();
             modeloCuotas.addRow(new Object[]{
-                    cu.getNumero(), cu.getMonto(), cu.getEstado(),
-                    loteVenc >= 0 ? loteVenc : "?"
+                    cu.getNumero(),
+                    cu.getMonto(),
+                    cu.getEstado(),
+                    loteVenc
             });
         }
     }

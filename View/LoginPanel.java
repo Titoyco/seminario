@@ -1,9 +1,10 @@
 package View;
 
 import javax.swing.*; // Importa las clases de Swing para crear la UI
-import java.awt.*;    // Importa clases para layouts y colores
 
-import Model.VariablesDAO; // Importa el DAO para la verificación de contraseña
+import Dao.VariablesDAO;
+
+import java.awt.*;    // Importa clases para layouts y colores
 
 public class LoginPanel extends JPanel { // Panel de login de usuario
     private JPasswordField passwordField; // Campo para que el usuario ingrese la contraseña
