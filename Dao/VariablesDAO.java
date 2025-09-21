@@ -1,7 +1,6 @@
 package Dao;
 import java.sql.*;
 
-import Model.ConexionMySQL;
 import Model.Variables;
 
 /**

@@ -3,7 +3,6 @@ package Dao;
 import java.sql.*;
 import java.time.LocalDate;
 
-import Model.ConexionMySQL;
 import Model.Lote;
 
 public class LoteDAO {
