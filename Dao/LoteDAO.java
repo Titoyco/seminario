@@ -2,7 +2,6 @@ package Dao;
 
 import java.sql.*;
 import java.time.LocalDate;
-
 import Model.Lote;
 
 public class LoteDAO {
@@ -74,13 +73,16 @@ public class LoteDAO {
             }
 
             conn.commit();
-            conn.setAutoCommit(true);
             return true;
         } catch (SQLException e) {
             System.out.println("Error cerrarLoteActualYCrearNuevo: " + e.getMessage());
             if (conn != null) {
                 try { conn.rollback(); } catch (SQLException ignored) {}
+            }
+        } finally {
+            if (conn != null) {
                 try { conn.setAutoCommit(true); } catch (SQLException ignored) {}
+                try { conn.close(); } catch (SQLException ignored) {}
             }
         }
         return false;

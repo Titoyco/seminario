@@ -1,6 +1,7 @@
 package Controller;
 
-import Model.*;
+import Model.Credito;
+import Model.Cuota;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,28 +13,45 @@ import Dao.VariablesDAO;
 
 /**
  * Lógica de negocio para creación de créditos.
- * Cuotas simples (monto / cantidad) con ajuste de redondeo en la última.
- * Interés: todavía no aplicado al importe de cuotas (pendiente definir fórmula).
+ *
+ * Ahora las cuotas incorporan el interés mensual de forma lineal según la fórmula:
+ *   total_con_interes = capital * (1 + n * i)
+ *   cuota = total_con_interes / n   (ajustando centavos en la última)
+ *
+ * Donde:
+ *   capital = monto ingresado
+ *   n = cantidad de cuotas
+ *   i = interesMensualDecimal (por ejemplo 0.05 si en variables.interes_mensual = 0.0500)
+ *
+ * NOTA: En la tabla 'creditos.monto' se sigue guardando el capital original.
+ * Las cuotas incluyen capital + interés total distribuido.
  */
 public class CreditoController {
 
+    /**
+     * @param tasaInteres (IGNORADO si es > 0: siempre se usa variables.interes_mensual)
+     */
     public static int crearCredito(int idCliente, double monto, double tasaInteres, int cantCuotas, LocalDate fecha) {
         Integer loteActual = VariablesDAO.getNroLote();
         if (loteActual == null) {
             System.out.println("No se pudo obtener lote actual.");
             return -1;
         }
-        // Si la tasaInteres ingresada es 0, podríamos usar variables.interes_mensual
-        if (tasaInteres <= 0) {
-            Double tm = VariablesDAO.getInteresMensual();
-            if (tm != null) {
-                // Si interes_mensual está guardado como decimal (0.05 = 5%), convierte a porcentaje:
-                tasaInteres = tm * 100.0;
-            }
+
+        // Obtener interés mensual decimal desde variables
+        Double interesMensualDecimal = VariablesDAO.getInteresMensual(); // ej: 0.05
+        if (interesMensualDecimal == null) {
+            System.out.println("Interés mensual no definido en variables.");
+            interesMensualDecimal = 0.0; // fallback
         }
 
-        Credito credito = new Credito(idCliente, monto, tasaInteres, cantCuotas, fecha);
-        List<Cuota> cuotas = generarCuotasIguales(monto, cantCuotas);
+        // Guardamos en el crédito la tasa como PORCENTAJE (ej: 5.00)
+        double tasaPorcentaje = interesMensualDecimal * 100.0;
+
+        // Generar cuotas con interés incorporado
+        List<Cuota> cuotas = generarCuotasConInteres(monto, cantCuotas, interesMensualDecimal);
+
+        Credito credito = new Credito(idCliente, monto, tasaPorcentaje, cantCuotas, fecha);
 
         int idGenerado = CreditoDAO.crearCreditoConCuotas(credito, cuotas, loteActual);
         if (idGenerado > 0) {
@@ -42,19 +60,32 @@ public class CreditoController {
         return idGenerado;
     }
 
-    private static List<Cuota> generarCuotasIguales(double montoTotal, int cant) {
+    /**
+     * Genera la lista de cuotas aplicando la fórmula lineal definida.
+     * total = monto * (1 + n * i)
+     * Se prorratea en n cuotas; se redondea cada cuota a 2 decimales
+     * usando floor en las primeras (para no pasarnos) y la última ajusta la diferencia.
+     */
+    private static List<Cuota> generarCuotasConInteres(double montoCapital, int cantCuotas, double interesMensualDecimal) {
         List<Cuota> list = new ArrayList<>();
-        double base = Math.floor((montoTotal / cant) * 100.0) / 100.0;
+        if (cantCuotas <= 0) return list;
+
+        double totalConInteres = montoCapital * (1.0 + cantCuotas * interesMensualDecimal);
+
+        // Base con floor a 2 decimales
+        double base = Math.floor((totalConInteres / cantCuotas) * 100.0) / 100.0;
         double acumulado = 0;
-        for (int i = 1; i <= cant; i++) {
+
+        for (int i = 1; i <= cantCuotas; i++) {
             double cuotaVal;
-            if (i < cant) {
+            if (i < cantCuotas) {
                 cuotaVal = base;
                 acumulado += base;
             } else {
-                cuotaVal = Math.round((montoTotal - acumulado) * 100.0) / 100.0;
+                // Última cuota: ajusta el redondeo
+                cuotaVal = Math.round((totalConInteres - acumulado) * 100.0) / 100.0;
             }
-            list.add(new Cuota(0, i, cuotaVal)); // id_credito se asigna en la transacción
+            list.add(new Cuota(0, i, cuotaVal)); // id_credito se setea en la inserción DAO
         }
         return list;
     }

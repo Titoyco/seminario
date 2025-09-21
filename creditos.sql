@@ -1,26 +1,16 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 21-09-2025 a las 00:03:10
--- Versión del servidor: 8.3.0
--- Versión de PHP: 8.2.18
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Base de datos: `creditos`
 --
+DROP DATABASE IF EXISTS creditos;
+CREATE DATABASE creditos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE creditos;
 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+SET FOREIGN_KEY_CHECKS = 0;
+START TRANSACTION;
+
+/*!40101 SET NAMES utf8mb4 */;
 -- --------------------------------------------------------
 
 --
@@ -30,13 +20,13 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `clientes`;
 CREATE TABLE IF NOT EXISTS `clientes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `documento` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `direccion` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `telefono` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `documento` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `direccion` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `telefono` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `documento` (`documento`)
+  UNIQUE KEY `uk_clientes_documento` (`documento`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -91,12 +81,12 @@ CREATE TABLE IF NOT EXISTS `creditos` (
   `fecha_otorgado` date NOT NULL,
   `tasa_interes` decimal(5,2) NOT NULL,
   `cantidad_cuotas` int NOT NULL,
-  `estado` enum('vigente','cancelado','mora') COLLATE utf8mb4_unicode_ci DEFAULT 'vigente',
+  `estado` enum('vigente','cancelado','mora') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'vigente',
   `lote_origen` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_creditos_cliente` (`id_cliente`),
-  KEY `fk_creditos_lote` (`lote_origen`)
-) ;
+  KEY `idx_creditos_cliente` (`id_cliente`),
+  KEY `idx_creditos_lote` (`lote_origen`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `creditos`
@@ -136,10 +126,11 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   `id_credito` int NOT NULL,
   `numero` int NOT NULL,
   `monto` decimal(12,2) NOT NULL,
-  `estado` enum('pendiente','pagada','mora') COLLATE utf8mb4_unicode_ci DEFAULT 'pendiente',
+  `estado` enum('pendiente','pagada','mora') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pendiente',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_cuota_credito_numero` (`id_credito`,`numero`)
-) ;
+  UNIQUE KEY `uk_cuota_credito_numero` (`id_credito`,`numero`),
+  KEY `idx_cuotas_credito` (`id_credito`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `cuotas`
@@ -232,11 +223,11 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `id_cuota` int NOT NULL,
   `fecha_pago` date NOT NULL,
   `monto_pagado` decimal(12,2) NOT NULL,
-  `metodo_pago` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `observaciones` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `metodo_pago` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `observaciones` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_pagos_cuota` (`id_cuota`)
-) ;
+  KEY `idx_pagos_cuota` (`id_cuota`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -264,8 +255,8 @@ INSERT INTO `pagos` (`id`, `id_cuota`, `fecha_pago`, `monto_pagado`, `metodo_pag
 DROP TABLE IF EXISTS `variables`;
 CREATE TABLE IF NOT EXISTS `variables` (
   `id` tinyint NOT NULL DEFAULT '1',
-  `pass` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `master_pass` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pass` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `master_pass` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nro_credito` int DEFAULT '0',
   `nro_lote` int DEFAULT '0',
   `interes_mensual` decimal(8,4) NOT NULL DEFAULT '0.0000',
@@ -303,6 +294,3 @@ ALTER TABLE `pagos`
   ADD CONSTRAINT `fk_pagos_cuota` FOREIGN KEY (`id_cuota`) REFERENCES `cuotas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

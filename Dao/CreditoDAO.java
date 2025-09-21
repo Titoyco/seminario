@@ -1,7 +1,6 @@
 package Dao;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,7 @@ import Model.Cuota;
 
 /**
  * DAO para la tabla 'creditos'.
- * Usa transacciones InnoDB para crear crédito + cuotas atómicamente.
+ * Crea crédito + cuotas en una transacción.
  */
 public class CreditoDAO {
 
@@ -88,7 +87,9 @@ public class CreditoDAO {
                             "VALUES (?,?,?,?,?,'vigente',?)";
         String sqlCuota = "INSERT INTO cuotas (id_credito, numero, monto, estado) VALUES (?,?,?,'pendiente')";
 
-        try (Connection conn = ConexionMySQL.getConnection()) {
+        Connection conn = null;
+        try {
+            conn = ConexionMySQL.getConnection();
             conn.setAutoCommit(false);
 
             int idCreditoGenerado;
@@ -117,10 +118,17 @@ public class CreditoDAO {
             }
 
             conn.commit();
-            conn.setAutoCommit(true);
             return idCreditoGenerado;
         } catch (SQLException e) {
             System.out.println("Error transaccional crear crédito: " + e.getMessage());
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ignored) {}
+            }
+        } finally {
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException ignored) {}
+                try { conn.close(); } catch (SQLException ignored) {}
+            }
         }
         return -1;
     }
