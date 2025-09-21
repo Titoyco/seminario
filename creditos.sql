@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 20-09-2025 a las 23:56:30
+-- Tiempo de generación: 21-09-2025 a las 00:03:10
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `metodo_pago` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `observaciones` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_cuota` (`id_cuota`)
+  KEY `fk_pagos_cuota` (`id_cuota`)
 ) ;
 
 --
@@ -289,6 +289,18 @@ INSERT INTO `variables` (`id`, `pass`, `master_pass`, `nro_credito`, `nro_lote`,
 ALTER TABLE `creditos`
   ADD CONSTRAINT `fk_creditos_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_creditos_lote` FOREIGN KEY (`lote_origen`) REFERENCES `lotes` (`nro_lote`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `cuotas`
+--
+ALTER TABLE `cuotas`
+  ADD CONSTRAINT `fk_cuotas_credito` FOREIGN KEY (`id_credito`) REFERENCES `creditos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD CONSTRAINT `fk_pagos_cuota` FOREIGN KEY (`id_cuota`) REFERENCES `cuotas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
