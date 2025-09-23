@@ -1,13 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import Controller.*;
-import Dao.CuotaDAO;
-import Dao.PagoDAO;
-import Dao.ReciboDAO;
 import Model.*;
 import View.*;
 import View.Clientes.AltaClientePanel;
@@ -20,7 +15,6 @@ import View.Creditos.ListarCreditosClientePanel;
 import View.Pagos.AnularPagoPanel;
 import View.Pagos.ListarPagosClientePanel;
 import View.Pagos.PagarCuotaPanel;
-import View.Pagos.ReciboPagoDialog;
 
 public class MainWindow extends JFrame {
 
@@ -80,7 +74,7 @@ public class MainWindow extends JFrame {
 
         menuBar.add(clientesMenu);
 
-        // ---- Menú Créditos (QUITAMOS Pagar Cuota) ----
+        // ---- Menú Créditos (sin Pagar Cuota) ----
         JMenu creditosMenu = new JMenu("Créditos");
         JMenuItem altaCreditoItem = new JMenuItem("Alta de Crédito");
         altaCreditoItem.addActionListener(e -> mostrarAltaCredito());
@@ -92,7 +86,7 @@ public class MainWindow extends JFrame {
 
         menuBar.add(creditosMenu);
 
-        // ---- Menú Pagos (NUEVO) ----
+        // ---- Menú Pagos ----
         JMenu pagosMenu = new JMenu("Pagos");
         JMenuItem pagarCuotaItem = new JMenuItem("Pagar Cuota");
         pagarCuotaItem.addActionListener(e -> mostrarPagarCuota());
@@ -145,7 +139,7 @@ public class MainWindow extends JFrame {
         mainPanel.repaint();
     }
 
-    // Agrega estos tres métodos (debajo de los existentes de mostrar...) 
+    // Pagos
     private void mostrarListarPagosCliente() {
         mainPanel.removeAll();
         ListarPagosClientePanel panel = new ListarPagosClientePanel();
@@ -165,7 +159,7 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    // Nuevo método
+    // Lote
     private void mostrarLotePanel() {
         mainPanel.removeAll();
         View.LotePanel panel = new View.LotePanel();
@@ -316,12 +310,12 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    // ---------- CRÉDITOS / PAGOS ----------
+    // ---------- CRÉDITOS ----------
     private void mostrarAltaCredito() {
         mainPanel.removeAll();
         AltaCreditoPanel panel = new AltaCreditoPanel();
         panel.setCrearListener(() -> {
-            // callback vacío por ahora
+            // callback vacío
         });
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
@@ -332,19 +326,6 @@ public class MainWindow extends JFrame {
         ListarCreditosClientePanel panel = new ListarCreditosClientePanel();
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
-    }
-
-
-
-    // Lanza el diálogo de recibo
-    private void mostrarReciboPago(int idCuota, LocalDate fechaCabecera) {
-        Map<String, Object> datos = ReciboDAO.datosReciboPorCuota(idCuota);
-        if (datos == null) {
-            JOptionPane.showMessageDialog(this, "No se pudieron obtener datos del recibo.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        ReciboPagoDialog dlg = new ReciboPagoDialog(this, datos, fechaCabecera);
-        dlg.setVisible(true);
     }
 
     // Utilidad
