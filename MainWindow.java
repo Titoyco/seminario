@@ -2,10 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import Controller.*;
 import Dao.CuotaDAO;
 import Dao.PagoDAO;
+import Dao.ReciboDAO;
 import Model.*;
 import View.*;
 
@@ -43,7 +45,7 @@ public class MainWindow extends JFrame {
     private void mostrarMenus() {
         JMenuBar menuBar = new JMenuBar();
 
-        // ---- Menú Clientes (igual que antes) ----
+        // ---- Menú Clientes ----
         JMenu clientesMenu = new JMenu("Clientes");
         JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente");
         altaClienteItem.addActionListener(e -> mostrarAltaCliente());
@@ -67,9 +69,8 @@ public class MainWindow extends JFrame {
 
         menuBar.add(clientesMenu);
 
-        // ---------------- Menú Créditos ----------------
+        // ---- Menú Créditos (QUITAMOS Pagar Cuota) ----
         JMenu creditosMenu = new JMenu("Créditos");
-
         JMenuItem altaCreditoItem = new JMenuItem("Alta de Crédito");
         altaCreditoItem.addActionListener(e -> mostrarAltaCredito());
         creditosMenu.add(altaCreditoItem);
@@ -78,14 +79,25 @@ public class MainWindow extends JFrame {
         listarCreditosClienteItem.addActionListener(e -> mostrarListarCreditosCliente());
         creditosMenu.add(listarCreditosClienteItem);
 
-        JMenuItem pagarCuotaItem = new JMenuItem("Pagar Cuota");
-        pagarCuotaItem.addActionListener(e -> mostrarPagarCuota());
-        creditosMenu.add(pagarCuotaItem);
-
         menuBar.add(creditosMenu);
 
+        // ---- Menú Pagos (NUEVO) ----
+        JMenu pagosMenu = new JMenu("Pagos");
+        JMenuItem pagarCuotaItem = new JMenuItem("Pagar Cuota");
+        pagarCuotaItem.addActionListener(e -> mostrarPagarCuota());
+        pagosMenu.add(pagarCuotaItem);
 
-        // ---- Menú Lote (nuevo) ----
+        JMenuItem listarPagosItem = new JMenuItem("Listar Pagos por Cliente");
+        listarPagosItem.addActionListener(e -> mostrarListarPagosCliente());
+        pagosMenu.add(listarPagosItem);
+
+        JMenuItem anularPagoItem = new JMenuItem("Anular Pago");
+        anularPagoItem.addActionListener(e -> mostrarAnularPago());
+        pagosMenu.add(anularPagoItem);
+
+        menuBar.add(pagosMenu);
+
+        // ---- Menú Lote ----
         JMenu loteMenu = new JMenu("Lote");
         JMenuItem loteActualItem = new JMenuItem("Lote Actual");
         loteActualItem.addActionListener(e -> mostrarLotePanel());
@@ -120,6 +132,26 @@ public class MainWindow extends JFrame {
         mainPanel.add(bienvenidaPanel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
+    }
+
+    // Agrega estos tres métodos (debajo de los existentes de mostrar...) 
+    private void mostrarListarPagosCliente() {
+        mainPanel.removeAll();
+        ListarPagosClientePanel panel = new ListarPagosClientePanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+    private void mostrarAnularPago() {
+        mainPanel.removeAll();
+        AnularPagoPanel panel = new AnularPagoPanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+    private void mostrarPagarCuota() {
+        mainPanel.removeAll();
+        PagarCuotaPanel panel = new PagarCuotaPanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
     }
 
     // Nuevo método
@@ -273,7 +305,7 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    // ---------- CRÉDITOS ----------
+    // ---------- CRÉDITOS / PAGOS ----------
     private void mostrarAltaCredito() {
         mainPanel.removeAll();
         AltaCreditoPanel panel = new AltaCreditoPanel();
@@ -291,43 +323,18 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    private void mostrarPagarCuota() {
-        mainPanel.removeAll();
-        PagoCuotaPanel panel = new PagoCuotaPanel();
-        panel.setPagarListener(e -> {
-            String idStr = panel.getIdCuota();
-            if (idStr.isEmpty()) {
-                JOptionPane.showMessageDialog(panel, "Ingrese ID de cuota.");
-                return;
-            }
-            try {
-                int idCuota = Integer.parseInt(idStr);
-                Cuota cuota = CuotaDAO.buscarPorId(idCuota);
-                if (cuota == null) {
-                    JOptionPane.showMessageDialog(panel, "Cuota no encontrada.");
-                    return;
-                }
-                if (cuota.isPagada()) {
-                    JOptionPane.showMessageDialog(panel, "La cuota ya está pagada.");
-                    return;
-                }
-                LocalDate fecha = LocalDate.parse(panel.getFecha());
-                boolean ok = PagoDAO.registrarPagoCompleto(
-                        idCuota,
-                        cuota.getMonto(),
-                        panel.getMetodo(),
-                        panel.getObs(),
-                        fecha
-                );
-                JOptionPane.showMessageDialog(panel, ok ? "Pago registrado." : "Error al registrar pago.");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(panel, "Error: " + ex.getMessage());
-            }
-        });
-        mainPanel.add(panel, BorderLayout.CENTER);
-        refrescar();
-    }
 
+
+    // Lanza el diálogo de recibo
+    private void mostrarReciboPago(int idCuota, LocalDate fechaCabecera) {
+        Map<String, Object> datos = ReciboDAO.datosReciboPorCuota(idCuota);
+        if (datos == null) {
+            JOptionPane.showMessageDialog(this, "No se pudieron obtener datos del recibo.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ReciboPagoDialog dlg = new ReciboPagoDialog(this, datos, fechaCabecera);
+        dlg.setVisible(true);
+    }
 
     // Utilidad
     private void refrescar() {
