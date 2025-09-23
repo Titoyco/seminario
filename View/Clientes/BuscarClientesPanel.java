@@ -1,4 +1,4 @@
-package View;
+package View.Clientes;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;

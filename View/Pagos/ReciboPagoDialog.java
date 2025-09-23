@@ -1,4 +1,4 @@
-package View;
+package View.Pagos;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,14 +70,14 @@ public class ReciboPagoDialog extends JDialog {
         sb.append("  Cantidad de cuotas: ").append(creditoCantidad).append("\n\n");
 
         sb.append("Detalle del Pago\n");
-        sb.append("  En el día de la fecha se realiza el pago de la cuota ")
+        sb.append("  En el día de la fecha se realiza el pago de \n  la cuota ")
           .append(cuotaNumero)
-          .append(" de un $ ")
+          .append("  de $ ")
           .append(String.format("%.2f", cuotaMonto))
           .append("\n\n");
 
-        sb.append("----------------------------------------------\n");
-        sb.append("Firma del cliente: ___________________________\n");
+        sb.append("----------------------------------------------\n \n \n");
+        sb.append("Firma del cajero: ____________________________\n");
 
         return sb.toString();
     }

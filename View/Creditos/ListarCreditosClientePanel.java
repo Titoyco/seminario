@@ -1,4 +1,4 @@
-package View;
+package View.Creditos;
 
 import Controller.CreditoController;
 import Controller.ClienteController;

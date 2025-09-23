@@ -1,4 +1,4 @@
-package View;
+package View.Pagos;
 
 import Controller.ClienteController;
 import Controller.PagoController;

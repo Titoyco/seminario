@@ -1,7 +1,8 @@
-package View;
+package View.Pagos;
 
 import Controller.ClienteController;
 import Controller.PagoController;
+import Dao.ReciboDAO;
 import Model.Cliente;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.util.Map;
  *  - Seleccionar cliente
  *  - Seleccionar cuota pendiente (combo muestra: Credito #X | Cuota #Y | $monto)
  *  - Botón pagar (usa fecha hoy)
+ *  - Emite recibo al pagar
  */
 public class PagarCuotaPanel extends JPanel {
 
@@ -125,9 +127,22 @@ public class PagarCuotaPanel extends JPanel {
         }
         int idCuota = (int) sel.get("id_cuota");
         boolean ok = PagoController.pagarCuota(idCuota, LocalDate.now(), "efectivo", "");
-        JOptionPane.showMessageDialog(this, ok ? "Pago registrado." : "No se pudo registrar el pago.");
-        if (ok) {
-            cargarCuotasPendientes();
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "No se pudo registrar el pago.");
+            return;
         }
+
+        // Mostrar recibo desde este panel
+        Map<String, Object> datos = ReciboDAO.datosReciboPorCuota(idCuota);
+        if (datos != null) {
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            ReciboPagoDialog dlg = new ReciboPagoDialog(owner, datos, LocalDate.now());
+            dlg.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Pago registrado, pero no se pudo obtener el recibo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // Refrescar lista de cuotas
+        cargarCuotasPendientes();
     }
 }

@@ -10,6 +10,17 @@ import Dao.PagoDAO;
 import Dao.ReciboDAO;
 import Model.*;
 import View.*;
+import View.Clientes.AltaClientePanel;
+import View.Clientes.BajaClientePanel;
+import View.Clientes.BuscarClientesPanel;
+import View.Clientes.ListaClientesPanel;
+import View.Clientes.ModificarClientePanel;
+import View.Creditos.AltaCreditoPanel;
+import View.Creditos.ListarCreditosClientePanel;
+import View.Pagos.AnularPagoPanel;
+import View.Pagos.ListarPagosClientePanel;
+import View.Pagos.PagarCuotaPanel;
+import View.Pagos.ReciboPagoDialog;
 
 public class MainWindow extends JFrame {
 

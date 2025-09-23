@@ -1,4 +1,4 @@
-package View;
+package View.Clientes;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
