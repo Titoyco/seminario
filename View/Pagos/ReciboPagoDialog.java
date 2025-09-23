@@ -77,7 +77,7 @@ public class ReciboPagoDialog extends JDialog {
         sb.append("  Cantidad de cuotas: ").append(creditoCantidad).append("\n\n");
 
         sb.append("Detalle del Pago\n");
-        sb.append("  En el día de la fecha se realiza el pago de la cuota ")
+        sb.append("  En el día de la fecha se realiza el pago de \n la cuota ")
           .append(cuotaNumero)
           .append(" de un $ ")
           .append(String.format("%.2f", cuotaMonto))

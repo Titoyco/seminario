@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Nuevo panel de pago de cuota:
+ * Panel de pago de cuota:
  *  - Seleccionar cliente
- *  - Seleccionar cuota pendiente (combo muestra: Credito #X | Cuota #Y | $monto)
+ *  - Cargar cuotas pendientes de créditos vigentes
+ *  - Seleccionar cuota pendiente (combo muestra: Crédito #X | Cuota #Y | $monto)
+ *  - Elegir método de pago y (opcional) observaciones
  *  - Botón pagar (usa fecha hoy)
  *  - Emite recibo al pagar
  */
@@ -23,8 +25,12 @@ public class PagarCuotaPanel extends JPanel {
     private JComboBox<Cliente> clienteCombo;
     private JComboBox<Map<String,Object>> cuotaCombo;
     private JButton cargarCuotasBtn;
+
+    // Nuevos campos
+    private JComboBox<String> metodoCombo;
+    private JTextField obsField;
+
     private JButton pagarBtn;
-    private JLabel infoInteres; // opcional si se quiere mostrar algo
 
     public PagarCuotaPanel() {
         setBackground(new Color(245,249,255));
@@ -80,12 +86,27 @@ public class PagarCuotaPanel extends JPanel {
         add(cuotaCombo, gbc);
         gbc.gridwidth=1;
 
+        // Método de pago (NUEVO)
+        addLabel("Método de pago:", gbc, 0,4);
+        metodoCombo = new JComboBox<>(new String[]{"efectivo","banco","transferencia"});
+        metodoCombo.setSelectedIndex(0);
+        gbc.gridx=1; gbc.gridy=4; gbc.gridwidth=2;
+        add(metodoCombo, gbc);
+        gbc.gridwidth=1;
+
+        // Observaciones (NUEVO, opcional)
+        addLabel("Observaciones:", gbc, 0,5);
+        obsField = new JTextField();
+        gbc.gridx=1; gbc.gridy=5; gbc.gridwidth=2;
+        add(obsField, gbc);
+        gbc.gridwidth=1;
+
         // Botón pagar
         pagarBtn = new JButton("Pagar");
         pagarBtn.setBackground(new Color(0,140,70));
         pagarBtn.setForeground(Color.WHITE);
         pagarBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        gbc.gridx=0; gbc.gridy=4; gbc.gridwidth=3;
+        gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=3;
         add(pagarBtn, gbc);
 
         // Listeners
@@ -126,8 +147,10 @@ public class PagarCuotaPanel extends JPanel {
             return;
         }
         int idCuota = (int) sel.get("id_cuota");
-        String metodo = "efectivo"; // podría venir de un combo si lo agregas a la UI
-        Integer idPago = PagoController.pagarCuotaYDevolverId(idCuota, LocalDate.now(), metodo, "");
+        String metodo = (String) metodoCombo.getSelectedItem();
+        String obs = obsField.getText() != null ? obsField.getText().trim() : "";
+
+        Integer idPago = PagoController.pagarCuotaYDevolverId(idCuota, LocalDate.now(), metodo, obs);
         if (idPago == null) {
             JOptionPane.showMessageDialog(this, "No se pudo registrar el pago.");
             return;
@@ -143,7 +166,8 @@ public class PagarCuotaPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Pago registrado (N° " + idPago + "), pero no se pudo obtener el recibo.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
-        // Refrescar lista de cuotas
+        // Limpiar observaciones y refrescar lista de cuotas
+        obsField.setText("");
         cargarCuotasPendientes();
     }
 }
