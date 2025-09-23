@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * DAO para obtener los datos necesarios del recibo a partir de una cuota.
+ * DAO para obtener los datos necesarios del recibo.
  */
 public class ReciboDAO {
 
@@ -50,6 +50,49 @@ public class ReciboDAO {
             }
         } catch (SQLException e) {
             System.out.println("Error datosReciboPorCuota: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * NUEVO: Retorna datos del recibo a partir del ID de pago.
+     * Incluye además:
+     *  - pago_id (int)
+     *  - pago_fecha (LocalDate)
+     *  - pago_metodo (String)
+     */
+    public static Map<String, Object> datosReciboPorPago(int idPago) {
+        String sql =
+            "SELECT p.id AS pago_id, p.fecha_pago, p.metodo_pago, " +
+            "       cl.nombre AS cliente_nombre, cl.documento AS cliente_dni, " +
+            "       cr.id AS credito_id, cr.fecha_otorgado, cr.monto AS credito_monto, cr.cantidad_cuotas AS credito_cantidad, " +
+            "       cu.numero AS cuota_numero, cu.monto AS cuota_monto " +
+            "FROM pagos p " +
+            "JOIN cuotas cu ON cu.id = p.id_cuota " +
+            "JOIN creditos cr ON cr.id = cu.id_credito " +
+            "JOIN clientes cl ON cl.id = cr.id_cliente " +
+            "WHERE p.id = ?";
+        try (Connection conn = ConexionMySQL.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPago);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                Map<String, Object> map = new HashMap<>();
+                map.put("pago_id", rs.getInt("pago_id"));
+                map.put("pago_fecha", rs.getDate("fecha_pago").toLocalDate());
+                map.put("pago_metodo", rs.getString("metodo_pago"));
+                map.put("cliente_nombre", rs.getString("cliente_nombre"));
+                map.put("cliente_dni", rs.getString("cliente_dni"));
+                map.put("credito_id", rs.getInt("credito_id"));
+                map.put("credito_fecha", rs.getDate("fecha_otorgado").toLocalDate());
+                map.put("credito_monto", rs.getDouble("credito_monto"));
+                map.put("credito_cantidad", rs.getInt("credito_cantidad"));
+                map.put("cuota_numero", rs.getInt("cuota_numero"));
+                map.put("cuota_monto", rs.getDouble("cuota_monto"));
+                return map;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error datosReciboPorPago: " + e.getMessage());
         }
         return null;
     }

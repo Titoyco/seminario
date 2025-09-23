@@ -16,33 +16,40 @@ import java.util.Map;
 public class PagoController {
 
     /**
-     * Paga una cuota completa:
-     *  - Inserta registro en pagos
-     *  - Marca cuota como pagada
-     *  - Si el crédito queda sin cuotas pendientes => lo marca cancelado
-     * Retorna true si todo ok.
+     * MANTIENE compatibilidad: paga y devuelve true/false.
      */
     public static boolean pagarCuota(int idCuota, LocalDate fecha, String metodo, String obs) {
+        return pagarCuotaYDevolverId(idCuota, fecha, metodo, obs) != null;
+    }
+
+    /**
+     * NUEVO: paga y devuelve el ID del pago generado.
+     * - Inserta registro en pagos
+     * - Marca cuota como pagada
+     * - Si el crédito queda sin cuotas pendientes => lo marca cancelado
+     * Retorna idPago si todo ok, o null si falla.
+     */
+    public static Integer pagarCuotaYDevolverId(int idCuota, LocalDate fecha, String metodo, String obs) {
         // Primero obtenemos la cuota para saber su monto y crédito
         Cuota cuota = CuotaDAO.buscarPorId(idCuota);
         if (cuota == null || !"pendiente".equalsIgnoreCase(cuota.getEstado())) {
-            return false;
+            return null;
         }
         int idCredito = cuota.getIdCredito();
-        boolean ok = PagoDAO.registrarPagoCompleto(idCuota, cuota.getMonto(), metodo, obs, fecha);
-        if (!ok) return false;
+        int idPago = PagoDAO.registrarPagoCompleto(idCuota, cuota.getMonto(), metodo, obs, fecha);
+        if (idPago <= 0) return null;
 
         // Verificar si aún quedan cuotas pendientes en el crédito
         boolean quedanPendientes = CuotaDAO.existenCuotasPendientes(idCredito);
         if (!quedanPendientes) {
             CreditoDAO.actualizarEstado(idCredito, "cancelado");
         }
-        return true;
+        return idPago;
     }
 
     /**
      * Lista cuotas pendientes (con datos de crédito) para un cliente.
-     * Retorna estructuras Map con: idCuota, idCredito, numero, monto.
+     * Retorna estructuras Map con: id_cuota, id_credito, numero, monto.
      */
     public static List<Map<String,Object>> listarCuotasPendientesCliente(int idCliente) {
         return CuotaDAO.listarPendientesPorCliente(idCliente);
@@ -52,7 +59,7 @@ public class PagoController {
      * Devuelve lista de pagos (cada pago como Map con campos relevantes) de un cliente.
      */
     public static List<Map<String,Object>> listarPagosCliente(int idCliente) {
-        return PagoDAO.listarPagosPorCliente(idCliente);
+        return Dao.PagoDAO.listarPagosPorCliente(idCliente);
     }
 
     /**
@@ -62,6 +69,6 @@ public class PagoController {
      *  - Si el crédito estaba cancelado y ahora hay al menos una pendiente -> pasa a vigente
      */
     public static boolean anularPago(int idPago) {
-        return PagoDAO.anularPago(idPago);
+        return Dao.PagoDAO.anularPago(idPago);
     }
 }

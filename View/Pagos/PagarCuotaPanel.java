@@ -111,7 +111,7 @@ public class PagarCuotaPanel extends JPanel {
         cuotaCombo.removeAllItems();
         Cliente c = (Cliente) clienteCombo.getSelectedItem();
         if (c == null) return;
-        List<Map<String,Object>> cuotas = Controller.PagoController.listarCuotasPendientesCliente(c.getId());
+        List<Map<String,Object>> cuotas = PagoController.listarCuotasPendientesCliente(c.getId());
         for (Map<String,Object> row : cuotas) cuotaCombo.addItem(row);
         if (cuotaCombo.getItemCount()==0) {
             JOptionPane.showMessageDialog(this, "No hay cuotas pendientes para este cliente.");
@@ -126,20 +126,21 @@ public class PagarCuotaPanel extends JPanel {
             return;
         }
         int idCuota = (int) sel.get("id_cuota");
-        boolean ok = PagoController.pagarCuota(idCuota, LocalDate.now(), "efectivo", "");
-        if (!ok) {
+        String metodo = "efectivo"; // podría venir de un combo si lo agregas a la UI
+        Integer idPago = PagoController.pagarCuotaYDevolverId(idCuota, LocalDate.now(), metodo, "");
+        if (idPago == null) {
             JOptionPane.showMessageDialog(this, "No se pudo registrar el pago.");
             return;
         }
 
-        // Mostrar recibo desde este panel
-        Map<String, Object> datos = ReciboDAO.datosReciboPorCuota(idCuota);
+        // Mostrar recibo desde este panel con datos del pago recién generado
+        Map<String, Object> datos = ReciboDAO.datosReciboPorPago(idPago);
         if (datos != null) {
             Window owner = SwingUtilities.getWindowAncestor(this);
             ReciboPagoDialog dlg = new ReciboPagoDialog(owner, datos, LocalDate.now());
             dlg.setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(this, "Pago registrado, pero no se pudo obtener el recibo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pago registrado (N° " + idPago + "), pero no se pudo obtener el recibo.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
         // Refrescar lista de cuotas

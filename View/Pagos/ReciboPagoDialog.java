@@ -44,6 +44,10 @@ public class ReciboPagoDialog extends JDialog {
     private String construirTexto(Map<String, Object> d, LocalDate fechaCabecera) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+        // Datos de pago (si están)
+        Integer pagoId = safeIntObj(d.get("pago_id"));
+        String pagoMetodo = safeStr(d.get("pago_metodo"));
+
         String clienteNombre = safeStr(d.get("cliente_nombre"));
         String clienteDni = safeStr(d.get("cliente_dni"));
         int creditoId = safeInt(d.get("credito_id"));
@@ -57,6 +61,9 @@ public class ReciboPagoDialog extends JDialog {
         sb.append("==============================================\n");
         sb.append("               RECIBO DE PAGO\n");
         sb.append("==============================================\n");
+        if (pagoId != null && pagoId > 0) {
+            sb.append("Pago N°: ").append(pagoId).append("\n");
+        }
         sb.append("Fecha: ").append(fechaCabecera != null ? fmt.format(fechaCabecera) : fmt.format(LocalDate.now())).append("\n\n");
 
         sb.append("Datos del Cliente\n");
@@ -70,11 +77,15 @@ public class ReciboPagoDialog extends JDialog {
         sb.append("  Cantidad de cuotas: ").append(creditoCantidad).append("\n\n");
 
         sb.append("Detalle del Pago\n");
-        sb.append("  En el día de la fecha se realiza el pago de \n  la cuota ")
+        sb.append("  En el día de la fecha se realiza el pago de la cuota ")
           .append(cuotaNumero)
-          .append("  de $ ")
+          .append(" de un $ ")
           .append(String.format("%.2f", cuotaMonto))
-          .append("\n\n");
+          .append("\n");
+        if (pagoMetodo != null && !pagoMetodo.isBlank()) {
+            sb.append("  Método de pago: ").append(pagoMetodo).append("\n");
+        }
+        sb.append("\n");
 
         sb.append("----------------------------------------------\n \n \n");
         sb.append("Firma del cajero: ____________________________\n");
@@ -85,6 +96,9 @@ public class ReciboPagoDialog extends JDialog {
     private String safeStr(Object o) { return o == null ? "-" : o.toString(); }
     private int safeInt(Object o) {
         try { return o == null ? 0 : Integer.parseInt(o.toString()); } catch (Exception e) { return 0; }
+    }
+    private Integer safeIntObj(Object o) {
+        try { return o == null ? null : Integer.valueOf(o.toString()); } catch (Exception e) { return null; }
     }
     private double safeDouble(Object o) {
         try { return o == null ? 0.0 : Double.parseDouble(o.toString()); } catch (Exception e) { return 0.0; }

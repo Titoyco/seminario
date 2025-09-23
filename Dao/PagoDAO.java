@@ -7,7 +7,12 @@ import java.sql.Date;
 
 public class PagoDAO {
 
-     public static boolean registrarPagoCompleto(int idCuota, double montoEsperado, String metodo, String obs, LocalDate fecha) {
+    /**
+     * Registra el pago y devuelve el ID generado del pago.
+     * - Inserta en pagos y marca la cuota como pagada en la MISMA transacción.
+     * - Si algo falla, hace rollback y retorna -1.
+     */
+    public static int registrarPagoCompleto(int idCuota, double montoEsperado, String metodo, String obs, LocalDate fecha) {
         String insertPago = "INSERT INTO pagos (id_cuota, fecha_pago, monto_pagado, metodo_pago, observaciones) VALUES (?,?,?,?,?)";
         Connection conn = null;
         try {
@@ -17,19 +22,25 @@ public class PagoDAO {
             // Si fecha es null, usamos hoy para evitar Date.valueOf(null)
             LocalDate efectiva = (fecha != null) ? fecha : LocalDate.now();
 
-            try (PreparedStatement ps = conn.prepareStatement(insertPago)) {
+            int idPagoGenerado;
+            try (PreparedStatement ps = conn.prepareStatement(insertPago, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, idCuota);
                 ps.setDate(2, Date.valueOf(efectiva));
                 ps.setDouble(3, montoEsperado);
                 ps.setString(4, metodo);
                 ps.setString(5, obs);
                 ps.executeUpdate();
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (!rs.next()) throw new SQLException("No se obtuvo ID de pago.");
+                    idPagoGenerado = rs.getInt(1);
+                }
             }
 
             CuotaDAO.marcarPagada(idCuota, conn);
 
             conn.commit();
-            return true;
+            return idPagoGenerado;
         } catch (SQLException e) {
             System.out.println("Error registrar pago: " + e.getMessage());
             if (conn != null) {
@@ -41,7 +52,7 @@ public class PagoDAO {
                 try { conn.close(); } catch (SQLException ignored) {}
             }
         }
-        return false;
+        return -1;
     }
 
     public static List<Map<String,Object>> listarPagosPorCliente(int idCliente) {
