@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -96,4 +98,58 @@ public class ReciboDAO {
         }
         return null;
     }
+
+    public static Map<String,Object> datosComprobanteCredito(int idCredito) {
+        String sql = "SELECT cr.id AS credito_id, cr.fecha_otorgado, cr.monto AS capital, " +
+                    "cr.tasa_interes AS tasa, cr.cantidad_cuotas, cl.nombre AS cliente_nombre, cl.documento AS cliente_dni " +
+                    "FROM creditos cr JOIN clientes cl ON cl.id = cr.id_cliente WHERE cr.id = ?";
+        try (Connection conn = ConexionMySQL.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCredito);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                Map<String,Object> m = new HashMap<>();
+                m.put("credito_id", rs.getInt("credito_id"));
+                m.put("fecha_otorgado", rs.getDate("fecha_otorgado").toLocalDate());
+                m.put("capital", rs.getDouble("capital"));
+                m.put("tasa", rs.getDouble("tasa"));
+                m.put("cantidad_cuotas", rs.getInt("cantidad_cuotas"));
+                m.put("cliente_nombre", rs.getString("cliente_nombre"));
+                m.put("cliente_dni", rs.getString("cliente_dni"));
+
+                // Calcular total con interés lineal
+                double capital = rs.getDouble("capital");
+                int n = rs.getInt("cantidad_cuotas");
+                double tasaDecimal = rs.getDouble("tasa") / 100.0;
+                double totalConInteres = capital * (1 + n * tasaDecimal);
+                m.put("total_con_interes", totalConInteres);
+                return m;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error datosComprobanteCredito: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static List<Map<String,Object>> cuotasDeCredito(int idCredito) {
+        List<Map<String,Object>> list = new ArrayList<>();
+        String sql = "SELECT numero, monto FROM cuotas WHERE id_credito = ? ORDER BY numero ASC";
+        try (Connection conn = ConexionMySQL.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCredito);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String,Object> fila = new HashMap<>();
+                    fila.put("numero", rs.getInt("numero"));
+                    fila.put("monto", rs.getDouble("monto"));
+                    list.add(fila);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error cuotasDeCredito: " + e.getMessage());
+        }
+        return list;
+    }
+
+
 }

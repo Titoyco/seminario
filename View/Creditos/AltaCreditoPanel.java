@@ -2,6 +2,7 @@ package View.Creditos;
 
 import Controller.ClienteController;
 import Controller.CreditoController;
+import Dao.ReciboDAO;
 import Dao.VariablesDAO;
 import Model.Cliente;
 
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Panel para crear un crédito solicitando:
@@ -114,21 +116,29 @@ public class AltaCreditoPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente.");
             return;
         }
+
         double monto;
         int cuotas;
         try {
             monto = Double.parseDouble(montoField.getText().trim());
             cuotas = Integer.parseInt(cuotasField.getText().trim());
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Monto o cuotas inválidos.");
             return;
         }
+
         if (monto <= 0 || cuotas <= 0) {
             JOptionPane.showMessageDialog(this, "Monto y cuotas deben ser > 0.");
             return;
         }
 
-        // Pasamos una tasa dummy (0) porque el controlador siempre toma la de variables
+        // Validación opcional de rango de cuotas (ajusta si definís otro límite)
+        if (cuotas > 12) {
+            JOptionPane.showMessageDialog(this, "Cantidad de cuotas excede el límite permitido (máx. 12).");
+            return;
+        }
+
+        // El controlador ignora la tasa recibida y toma la de variables
         int idCredito = CreditoController.crearCredito(
                 c.getId(),
                 monto,
@@ -141,6 +151,23 @@ public class AltaCreditoPanel extends JPanel {
             JOptionPane.showMessageDialog(this,
                     "Crédito creado (ID=" + idCredito + ").\n" +
                     "Interés mensual aplicado: " + String.format("%.2f%%", interesMensualPorcentaje));
+
+            // ========== NUEVO: mostrar comprobante de alta ==========
+            try {
+                Map<String, Object> cab = ReciboDAO.datosComprobanteCredito(idCredito);
+                List<Map<String, Object>> cuotasDet = ReciboDAO.cuotasDeCredito(idCredito);
+                if (cab != null && cuotasDet != null && !cuotasDet.isEmpty()) {
+                    Window owner = SwingUtilities.getWindowAncestor(this);
+                    ComprobanteCreditoDialog dlg = new ComprobanteCreditoDialog(owner, cab, cuotasDet);
+                    dlg.setVisible(true);
+                } else {
+                    System.out.println("No se pudo armar el comprobante (datos incompletos).");
+                }
+            } catch (Exception ex) {
+                System.out.println("Error mostrando comprobante: " + ex.getMessage());
+            }
+            // ========================================================
+
             limpiar();
             if (onSuccess != null) onSuccess.run();
         } else {
