@@ -21,7 +21,7 @@ public class BuscarClientesPanel extends JPanel {
     // Botones de acción
     private JButton modificarBtn;
     private JButton eliminarBtn;
-    private JButton verPrestamosBtn;
+    private JButton verCreditosBtn;
     private JButton verPagosBtn;
 
     public BuscarClientesPanel() {
@@ -91,12 +91,12 @@ public class BuscarClientesPanel extends JPanel {
         JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         modificarBtn = new JButton("Modificar");
         eliminarBtn = new JButton("Eliminar");
-        verPrestamosBtn = new JButton("Ver Préstamos");
+        verCreditosBtn = new JButton("Ver Préstamos");
         verPagosBtn = new JButton("Ver Pagos");
 
         botonesPanel.add(modificarBtn);
         botonesPanel.add(eliminarBtn);
-        botonesPanel.add(verPrestamosBtn);
+        botonesPanel.add(verCreditosBtn);
         botonesPanel.add(verPagosBtn);
 
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weighty = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -145,7 +145,7 @@ public class BuscarClientesPanel extends JPanel {
     // Permite agregar listeners a los botones de acción
     public void setModificarListener(ActionListener l) { modificarBtn.addActionListener(l); }
     public void setEliminarListener(ActionListener l) { eliminarBtn.addActionListener(l); }
-    public void setVerPrestamosListener(ActionListener l) { verPrestamosBtn.addActionListener(l); }
+    public void setVerCreditosListener(ActionListener l) { verCreditosBtn.addActionListener(l); }
     public void setVerPagosListener(ActionListener l) { verPagosBtn.addActionListener(l); }
 
     // Permite agregar un listener extra al botón Buscar si se desea
