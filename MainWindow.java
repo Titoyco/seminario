@@ -304,7 +304,7 @@ public class MainWindow extends JFrame {
     // ---------- SISTEMA ----------
     private void mostrarCambioContraPanel() {
         mainPanel.removeAll();
-        PassPanel panel = new PassPanel(() -> mostrarMenus());
+        CambioPassPanel panel = new CambioPassPanel(() -> mostrarMenus());
         new PassController(panel, () -> mostrarMenus());
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();

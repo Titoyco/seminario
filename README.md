@@ -2,6 +2,8 @@
 
 Aplicación de escritorio (Java Swing + MySQL) para administrar créditos personales otorgados a clientes de una tienda de indumentaria (caso real de una tienda en Trelew, Chubut). Centraliza clientes, créditos, cuotas, pagos y periodos (lotes), reduciendo el manejo manual en planillas y mejorando la trazabilidad.
 
+> Trabajo realizado para la asignatura **SEMINARIO** de la **Licenciatura en Informática – Universidad Siglo XXI**.
+
 ---
 
 ## 1. Características principales
@@ -203,8 +205,11 @@ Se pueden limpiar tablas con `TRUNCATE` para comenzar desde cero.
 
 ## 14. Créditos
 
-Proyecto desarrollado en el marco de un trabajo académico para informatizar el proceso de créditos de una tienda de indumentaria (Trelew, Chubut).  
-Datos de ejemplo ficticios.
+Proyecto desarrollado como trabajo académico para la materia **SEMINARIO** de la **Licenciatura en Informática – Universidad Siglo XXI**.  
+Autor: **Roberto Omar Davies**  
+Email: **roberto.davies@gmail.com**
+
+Los datos de ejemplo son ficticios y no corresponden a personas reales.
 
 ---
 
@@ -216,5 +221,3 @@ Login: `admin` (o `master`).
 Otorga créditos, genera cuotas, registra pagos, emite recibos, cierra lotes.
 
 ---
-
-¿Dudas o sugerencias? Abrí un issue. ¡Gracias por usar el sistema!

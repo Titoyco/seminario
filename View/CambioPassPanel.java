@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 /**
  * Panel de cambio de contraseña con formato moderno y comentarios explicativos.
  */
-public class PassPanel extends JPanel { // Panel para cambiar la contraseña
+public class CambioPassPanel extends JPanel { // Panel para cambiar la contraseña
     // Campo para la nueva contraseña
     private JPasswordField nuevaPassField;
     // Campo para la confirmación de la nueva contraseña
@@ -14,7 +14,7 @@ public class PassPanel extends JPanel { // Panel para cambiar la contraseña
     // Botón para guardar la nueva contraseña
     private JButton guardarBtn;
 
-    public PassPanel( Runnable onSuccess) {
+    public CambioPassPanel( Runnable onSuccess) {
         // Establece el color de fondo igual que el LoginPanel
         setBackground(new Color(245, 249, 255));
 

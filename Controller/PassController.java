@@ -1,6 +1,6 @@
 package Controller;
 
-import View.PassPanel;
+import View.CambioPassPanel;
 
 import javax.swing.*;
 
@@ -8,9 +8,9 @@ import Dao.VariablesDAO;
 
 public class PassController {
 
-    private PassPanel panel;
+    private CambioPassPanel panel;
 
-    public PassController(PassPanel panel, Runnable onSuccess) {
+    public PassController(CambioPassPanel panel, Runnable onSuccess) {
         this.panel = panel;
 
         // Agrega el listener al botón guardar del panel
