@@ -23,6 +23,7 @@ public class BuscarClientesPanel extends JPanel {
     private JButton eliminarBtn;
     private JButton verCreditosBtn;
     private JButton verPagosBtn;
+    private JButton verDeudaBtn;
 
     public BuscarClientesPanel() {
         setLayout(new GridBagLayout());
@@ -91,13 +92,15 @@ public class BuscarClientesPanel extends JPanel {
         JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         modificarBtn = new JButton("Modificar");
         eliminarBtn = new JButton("Eliminar");
-        verCreditosBtn = new JButton("Ver Préstamos");
+        verCreditosBtn = new JButton("Ver Creditos");
         verPagosBtn = new JButton("Ver Pagos");
+        verDeudaBtn = new JButton("Ver Deuda");
 
         botonesPanel.add(modificarBtn);
         botonesPanel.add(eliminarBtn);
         botonesPanel.add(verCreditosBtn);
         botonesPanel.add(verPagosBtn);
+        botonesPanel.add(verDeudaBtn);
 
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weighty = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
         add(botonesPanel, gbc);
@@ -106,6 +109,7 @@ public class BuscarClientesPanel extends JPanel {
         buscarBtn.addActionListener(e -> buscarClientes());
         nombreField.addActionListener(e -> buscarClientes());
         documentoField.addActionListener(e -> buscarClientes());
+
     }
 
     // Busca clientes usando el controlador y actualiza la tabla
@@ -147,6 +151,7 @@ public class BuscarClientesPanel extends JPanel {
     public void setEliminarListener(ActionListener l) { eliminarBtn.addActionListener(l); }
     public void setVerCreditosListener(ActionListener l) { verCreditosBtn.addActionListener(l); }
     public void setVerPagosListener(ActionListener l) { verPagosBtn.addActionListener(l); }
+    public void setVerDeudaListener(ActionListener l) { verDeudaBtn.addActionListener(l); }
 
     // Permite agregar un listener extra al botón Buscar si se desea
     public void setBuscarListener(ActionListener listener) {

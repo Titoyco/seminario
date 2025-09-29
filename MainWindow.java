@@ -10,11 +10,13 @@ import View.Clientes.BajaClientePanel;
 import View.Clientes.BuscarClientesPanel;
 import View.Clientes.ListaClientesPanel;
 import View.Clientes.ModificarClientePanel;
+import View.Clientes.DeudaClientePanel;
 import View.Creditos.AltaCreditoPanel;
 import View.Creditos.ListarCreditosClientePanel;
 import View.Pagos.AnularPagoPanel;
 import View.Pagos.ListarPagosClientePanel;
 import View.Pagos.PagarCuotaPanel;
+
 
 public class MainWindow extends JFrame {
 
@@ -83,6 +85,10 @@ public class MainWindow extends JFrame {
         JMenuItem listarCreditosClienteItem = new JMenuItem("Créditos por Cliente");
         listarCreditosClienteItem.addActionListener(e -> mostrarListarCreditosCliente());
         creditosMenu.add(listarCreditosClienteItem);
+
+        JMenuItem listarTodosCreditosItem = new JMenuItem("Listar Todos los Créditos");
+        listarTodosCreditosItem.addActionListener(e -> mostrarListarTodosCreditos());
+        creditosMenu.add(listarTodosCreditosItem);
 
         menuBar.add(creditosMenu);
 
@@ -249,7 +255,50 @@ public class MainWindow extends JFrame {
             if (id != null) mostrarBajaClientePanel(id);
             else JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
         });
+/* 
+        panel.setVerCreditosListener(e -> {
+            Integer id = panel.getClienteSeleccionadoId();
+            if (id != null) {
+                mainPanel.removeAll();
+                ListarCreditosClientePanel creditosPanel = new ListarCreditosClientePanel(id);
+                mainPanel.add(creditosPanel, BorderLayout.CENTER);
+                refrescar();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+            }
+        });
 
+        panel.setVerPagosListener(e -> {
+            Integer id = panel.getClienteSeleccionadoId();
+            if (id != null) {
+                mainPanel.removeAll();
+                ListarPagosClientePanel pagosPanel = new ListarPagosClientePanel(id);
+                mainPanel.add(pagosPanel, BorderLayout.CENTER);
+                refrescar();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+            }
+        });
+*/
+        panel.setVerDeudaListener(e -> {
+            Integer id = panel.getClienteSeleccionadoId();
+            if (id != null) {
+                mainPanel.removeAll();
+                DeudaClientePanel deudaPanel = new DeudaClientePanel(id, () -> mostrarBuscarClientesPanel());
+                mainPanel.add(deudaPanel, BorderLayout.CENTER);
+                refrescar();
+            } else {
+                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+            }
+        });
+
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+
+    private void mostrarDeudaCliente(int idCliente) {
+        mainPanel.removeAll();
+        DeudaClientePanel panel = new DeudaClientePanel(idCliente, () -> mostrarBuscarClientesPanel());
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }
@@ -327,6 +376,13 @@ public class MainWindow extends JFrame {
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }
+
+    private void mostrarListarTodosCreditos() {
+        mainPanel.removeAll();
+        View.Creditos.ListarTodosCreditosPanel panel = new View.Creditos.ListarTodosCreditosPanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }   
 
     // Utilidad
     private void refrescar() {
