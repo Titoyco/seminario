@@ -23,7 +23,7 @@ public class MainWindow extends JFrame {
     private JPanel mainPanel;
 
     public MainWindow() {
-        setTitle("Sistema de Préstamos Personales");
+        setTitle("Sistema de Créditos Personales - SIGLO 21");
         setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
