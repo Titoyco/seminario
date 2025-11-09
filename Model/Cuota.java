@@ -1,11 +1,9 @@
+// Model/Cuota.java
+// Modelo para una cuota de un crédito otorgado.
+
 package Model;
 
-/**
- * Modelo adaptado al esquema actual:
- * Tabla cuotas: id, id_credito, numero, monto, estado (pendiente|pagada|mora)
- * No existe fecha_vencimiento ni campo pagada en DB.
- * El vencimiento real se deriva: lote_vencimiento = credito.lote_origen + numero.
- */
+// Clase Cuota con atributos principales
 public class Cuota {
     private int id;
     private int idCredito;
@@ -13,6 +11,7 @@ public class Cuota {
     private double monto;
     private String estado; // 'pendiente','pagada','mora'
 
+    // Constructor completo
     public Cuota(int id, int idCredito, int numero, double monto, String estado) {
         this.id = id;
         this.idCredito = idCredito;
@@ -29,25 +28,29 @@ public class Cuota {
         this.estado = "pendiente";
     }
 
+    // Getters
     public int getId() { return id; }
     public int getIdCredito() { return idCredito; }
     public int getNumero() { return numero; }
     public double getMonto() { return monto; }
     public String getEstado() { return estado; }
 
+    // Métodos de conveniencia para estado
     public boolean isPagada() { return "pagada".equalsIgnoreCase(estado); }
     public boolean isMora() { return "mora".equalsIgnoreCase(estado); }
     public boolean isPendiente() { return "pendiente".equalsIgnoreCase(estado); }
 
+    // Setters
     public void setEstado(String estado) { this.estado = estado; }
     public void setId(int id) { this.id = id; }
 
+    // toString para mostrar información básica
     @Override
     public String toString() {
         return "Cuota #" + numero + " $" + monto + " [" + estado + "]";
     }
 
-    // Deriva el lote de vencimiento en base al lote_origen del crédito:
+    // Obtiene el lote de vencimiento en base al lote_origen del crédito:
     public int loteVencimiento(int loteOrigenCredito) {
         return loteOrigenCredito + numero;
     }

@@ -1,3 +1,5 @@
+// Controlador para gestionar las operaciones relacionadas con los lotes.
+
 package Controller;
 
 import Model.Lote;
@@ -12,10 +14,9 @@ public class LoteController {
         return LoteDAO.getLoteActual();
     }
 
-    /**
-     * Cierra el lote actual y crea el siguiente automáticamente.
-     * Usa la fecha de hoy tanto para el cierre como para la apertura del nuevo (puedes separar si querés).
-     */
+    // Cierra el lote actual y crea el siguiente automáticamente.
+    // Usa la fecha de hoy tanto para el cierre como para la apertura del nuevo.
+    
     public static boolean cerrarYCrearSiguiente(LocalDate fechaCierre, LocalDate fechaAperturaNuevo) {
         return LoteDAO.cerrarLoteActualYCrearNuevo(fechaCierre, fechaAperturaNuevo);
     }

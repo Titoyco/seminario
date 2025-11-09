@@ -1,7 +1,11 @@
+// Pago.java
+// Modelo para un pago de una cuota.
+
 package Model;
 
 import java.time.LocalDate;
 
+// Clase que representa un pago de una cuota con sus detalles.
 public class Pago {
     private int id;
     private int idCuota;
@@ -10,6 +14,7 @@ public class Pago {
     private String metodoPago;
     private String observaciones;
 
+    // Constructores
     public Pago(int id, int idCuota, LocalDate fechaPago, double montoPagado, String metodoPago, String observaciones) {
         this.id = id;
         this.idCuota = idCuota;
@@ -19,6 +24,7 @@ public class Pago {
         this.observaciones = observaciones;
     }
 
+    // Constructor sin id para nuevos pagos
     public Pago(int idCuota, LocalDate fechaPago, double montoPagado, String metodoPago, String observaciones) {
         this.idCuota = idCuota;
         this.fechaPago = fechaPago;
@@ -27,6 +33,7 @@ public class Pago {
         this.observaciones = observaciones;
     }
 
+    // Getters
     public int getId() { return id; }
     public int getIdCuota() { return idCuota; }
     public LocalDate getFechaPago() { return fechaPago; }

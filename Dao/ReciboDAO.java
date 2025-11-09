@@ -1,30 +1,19 @@
+// Dao/ReciboDAO.java
+// DAO para obtener los datos necesarios del recibo.
+
 package Dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-/**
- * DAO para obtener los datos necesarios del recibo.
- */
+
 public class ReciboDAO {
 
-    /**
-     * Retorna un Map con:
-     *  - cliente_nombre (String)
-     *  - cliente_dni (String)
-     *  - credito_id (int)
-     *  - credito_fecha (java.time.LocalDate)
-     *  - credito_monto (double)
-     *  - credito_cantidad (int)
-     *  - cuota_numero (int)
-     *  - cuota_monto (double)
-     */
+// Retorna datos del recibo a partir del ID de cuota.
     public static Map<String, Object> datosReciboPorCuota(int idCuota) {
         String sql =
             "SELECT cl.nombre AS cliente_nombre, cl.documento AS cliente_dni, " +
@@ -56,13 +45,7 @@ public class ReciboDAO {
         return null;
     }
 
-    /**
-     * NUEVO: Retorna datos del recibo a partir del ID de pago.
-     * Incluye además:
-     *  - pago_id (int)
-     *  - pago_fecha (LocalDate)
-     *  - pago_metodo (String)
-     */
+    // Retorna datos del recibo a partir del ID de pago.
     public static Map<String, Object> datosReciboPorPago(int idPago) {
         String sql =
             "SELECT p.id AS pago_id, p.fecha_pago, p.metodo_pago, " +
@@ -99,6 +82,7 @@ public class ReciboDAO {
         return null;
     }
 
+    // Retorna datos del comprobante de crédito a partir del ID de crédito.
     public static Map<String,Object> datosComprobanteCredito(int idCredito) {
         String sql = "SELECT cr.id AS credito_id, cr.fecha_otorgado, cr.monto AS capital, " +
                     "cr.tasa_interes AS tasa, cr.cantidad_cuotas, cl.nombre AS cliente_nombre, cl.documento AS cliente_dni " +
@@ -131,25 +115,7 @@ public class ReciboDAO {
         return null;
     }
 
-    public static List<Map<String,Object>> cuotasDeCredito(int idCredito) {
-        List<Map<String,Object>> list = new ArrayList<>();
-        String sql = "SELECT numero, monto FROM cuotas WHERE id_credito = ? ORDER BY numero ASC";
-        try (Connection conn = ConexionMySQL.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, idCredito);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Map<String,Object> fila = new HashMap<>();
-                    fila.put("numero", rs.getInt("numero"));
-                    fila.put("monto", rs.getDouble("monto"));
-                    list.add(fila);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error cuotasDeCredito: " + e.getMessage());
-        }
-        return list;
-    }
+
 
 
 }

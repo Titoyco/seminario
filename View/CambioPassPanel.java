@@ -1,19 +1,20 @@
+// CambioPassPanel.java
+// Panel de cambio de contraseña con formato moderno y comentarios explicativos
+
 package View;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-/**
- * Panel de cambio de contraseña con formato moderno y comentarios explicativos.
- */
+
 public class CambioPassPanel extends JPanel { // Panel para cambiar la contraseña
-    // Campo para la nueva contraseña
+    
+    // Componentes del panel
     private JPasswordField nuevaPassField;
-    // Campo para la confirmación de la nueva contraseña
     private JPasswordField confirmarPassField;
-    // Botón para guardar la nueva contraseña
     private JButton guardarBtn;
 
+    // Constructor del panel de cambio de contraseña
     public CambioPassPanel( Runnable onSuccess) {
         // Establece el color de fondo igual que el LoginPanel
         setBackground(new Color(245, 249, 255));

@@ -1,3 +1,6 @@
+// CuotaDAO.java
+// DAO para la tabla 'cuotas'.
+
 package Dao;
 
 import java.sql.*;
@@ -7,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import Model.Cuota;
-
+// Importa la clase de conexión a la base de datos
 public class CuotaDAO {
 
+    // Mapea un ResultSet a un objeto Cuota
     private static Cuota map(ResultSet rs) throws SQLException {
         return new Cuota(
             rs.getInt("id"),
@@ -20,6 +24,7 @@ public class CuotaDAO {
         );
     }
 
+    // Lista cuotas por ID de crédito
     public static List<Cuota> listarPorCredito(int idCredito) {
         List<Cuota> list = new ArrayList<>();
         String sql = "SELECT * FROM cuotas WHERE id_credito = ? ORDER BY numero ASC";
@@ -35,6 +40,7 @@ public class CuotaDAO {
         return list;
     }
 
+    // Busca una cuota por su ID
     public static Cuota buscarPorId(int idCuota) {
         String sql = "SELECT * FROM cuotas WHERE id = ?";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -49,6 +55,7 @@ public class CuotaDAO {
         return null;
     }
 
+    // Marca una cuota como pagada
     public static boolean marcarPagada(int idCuota, Connection externalConn) throws SQLException {
         String sql = "UPDATE cuotas SET estado = 'pagada' WHERE id = ? AND estado <> 'pagada'";
         try (PreparedStatement ps = externalConn.prepareStatement(sql)) {
@@ -64,6 +71,7 @@ public class CuotaDAO {
                      "FROM cuotas cu JOIN creditos cr ON cr.id = cu.id_credito " +
                      "WHERE cr.id_cliente = ? AND cu.estado='pendiente' AND cr.estado='vigente' " +
                      "ORDER BY cr.id DESC, cu.numero ASC";
+        // Ejecuta la consulta y mapea los resultados
         try (Connection conn = ConexionMySQL.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCliente);

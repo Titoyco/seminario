@@ -1,13 +1,12 @@
+// Controlador para la lógica de cambio de contraseña
+
 package Controller;
-
 import View.CambioPassPanel;
-
 import javax.swing.*;
-
 import Dao.VariablesDAO;
 
 public class PassController {
-
+    
     private CambioPassPanel panel;
 
     public PassController(CambioPassPanel panel, Runnable onSuccess) {

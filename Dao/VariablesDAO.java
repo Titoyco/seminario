@@ -1,15 +1,14 @@
+// Dao/VariablesDAO.java
+// DAO para la tabla 'variables'.
+
 package Dao;
 import java.sql.*;
 
 import Model.Variables;
 
-/**
- * DAO para la tabla 'variables'.
- * Ahora la base está en InnoDB, por lo que operaciones son transaccionales si se agrupan en una misma conexión.
- * Se asume UNA sola fila (id=1).
- */
 public class VariablesDAO {
 
+    // Mapea un ResultSet a un objeto Variables
     private static Variables map(ResultSet rs) throws SQLException {
         return new Variables(
             rs.getString("pass"),
@@ -20,6 +19,7 @@ public class VariablesDAO {
         );
     }
 
+    // Retorna el objeto Variables (única fila)
     public static Variables getVariables() {
         String sql = "SELECT pass, master_pass, nro_credito, nro_lote, interes_mensual FROM variables LIMIT 1";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -32,31 +32,37 @@ public class VariablesDAO {
         return null;
     }
 
+    // Métodos para obtener el valor del campo pass
     public static String getPassword() {
         Variables v = getVariables();
         return v != null ? v.getPassword() : null;
     }
 
+    // Métodos para obtener el valor del campo master_pass
     public static String getMasterPassword() {
         Variables v = getVariables();
         return v != null ? v.getMasterPassword() : null;
     }
 
+    // Métodos para obtener el valor del campo nro_lote
     public static Integer getNroLote() {
         Variables v = getVariables();
         return v != null ? v.getNroLote() : null;
     }
 
+    // Métodos para obtener el valor del campo nro_credito
     public static Integer getNroCredito() {
         Variables v = getVariables();
         return v != null ? v.getNroCredito() : null;
     }
 
+    // Métodos para obtener el valor del campo interes_mensual
     public static Double getInteresMensual() {
         Variables v = getVariables();
         return v != null ? v.getInteresMensual() : null;
     }
 
+    // Métodos para actualizar el campo pass
     public static boolean updatePassword(String nuevaPass) {
         String sql = "UPDATE variables SET pass = ? LIMIT 1";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -69,6 +75,7 @@ public class VariablesDAO {
         return false;
     }
 
+    // Métodos para actualizar el campo interes_mensual
     public static boolean updateInteresMensual(double nuevoValor) {
         String sql = "UPDATE variables SET interes_mensual = ? LIMIT 1";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -81,6 +88,7 @@ public class VariablesDAO {
         return false;
     }
 
+    // Métodos para actualizar el campo nro_credito
     public static synchronized int incrementarNroCredito() {
         Integer actual = getNroCredito();
         if (actual == null) return -1;
@@ -96,6 +104,7 @@ public class VariablesDAO {
         return -1;
     }
 
+    // Métodos para actualizar el campo nro_lote
     public static synchronized boolean setNroLote(int nuevoLote) {
         String sql = "UPDATE variables SET nro_lote = ? LIMIT 1";
         try (Connection conn = ConexionMySQL.getConnection();

@@ -1,6 +1,5 @@
 package View.Creditos;
 
-import Controller.CreditoController;
 import Model.Credito;
 
 import javax.swing.*;
@@ -9,6 +8,8 @@ import java.awt.*;
 import java.util.List;
 
 public class ListarTodosCreditosPanel extends JPanel {
+
+    // Componentes del panel
     private JTable tabla;
     private DefaultTableModel modelo;
 

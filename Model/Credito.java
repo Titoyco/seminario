@@ -1,12 +1,12 @@
+// Model/Credito.java
+// Modelo para un crédito otorgado a un cliente.
+
 package Model;
 
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Modelo para un crédito otorgado a un cliente.
- * Ahora incluye estado y loteOrigen para poder reflejar correctamente la información de la DB.
- */
+// Clase Credito con atributos principales
 public class Credito {
     private int id;
     private int idCliente;
@@ -44,6 +44,7 @@ public class Credito {
         this.estado = "vigente";
     }
 
+    // Getters
     public int getId() { return id; }
     public int getIdCliente() { return idCliente; }
     public double getMontoTotal() { return montoTotal; }
@@ -54,11 +55,13 @@ public class Credito {
     public int getLoteOrigen() { return loteOrigen; }
     public List<Cuota> getCuotas() { return cuotas; }
 
+    // Setters
     public void setId(int id) { this.id = id; }
     public void setCuotas(List<Cuota> cuotas) { this.cuotas = cuotas; }
     public void setEstado(String estado) { this.estado = estado; }
     public void setLoteOrigen(int loteOrigen) { this.loteOrigen = loteOrigen; }
 
+    // toString para mostrar información básica
     @Override
     public String toString() {
         return "Credito #" + id +

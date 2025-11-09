@@ -1,3 +1,6 @@
+// BajaClientePanel.java
+// Panel para dar de baja un cliente
+
 package View.Clientes;
 import javax.swing.*;
 import java.awt.*;
@@ -6,12 +9,10 @@ import java.util.List;
 import Model.Cliente;
 import Controller.ClienteController;
 
-/**
- * Panel para dar de baja un cliente, permite seleccionar de una lista o ingresar el ID manualmente.
- * Si el constructor recibe un id, el combo muestra ese cliente como seleccionado.
- */
+
 public class BajaClientePanel extends JPanel {
 
+    // Componentes del panel
     private JButton eliminarBtn;
     private JTextField idField;
     private JComboBox<Cliente> clientesCombo;
@@ -43,7 +44,6 @@ public class BajaClientePanel extends JPanel {
         comboLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 1;
         add(comboLabel, gbc);
-
         clientesCombo = new JComboBox<>();
         cargarClientes(); // Carga la lista de clientes en el combo
         clientesCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -56,7 +56,6 @@ public class BajaClientePanel extends JPanel {
         idLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 2;
         add(idLabel, gbc);
-
         idField = new JTextField();
         idField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         idField.setForeground(new Color(56, 81, 145));
@@ -131,10 +130,7 @@ public class BajaClientePanel extends JPanel {
         idField.setText("");
     }
 
-    /**
-     * Selecciona en el combo el cliente con el id dado (si existe).
-     * También actualiza el campo de ID.
-     */
+    // Selecciona en el combo el cliente con el ID dado.
     public void seleccionarClientePorId(int clienteId) {
         for (int i = 0; i < clientesCombo.getItemCount(); i++) {
             Cliente c = clientesCombo.getItemAt(i);

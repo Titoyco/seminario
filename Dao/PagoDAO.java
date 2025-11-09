@@ -1,3 +1,6 @@
+// PagoDAO.java
+// DAO para la tabla 'pagos'.
+
 package Dao;
 
 import java.sql.*;
@@ -7,11 +10,7 @@ import java.sql.Date;
 
 public class PagoDAO {
 
-    /**
-     * Registra el pago y devuelve el ID generado del pago.
-     * - Inserta en pagos y marca la cuota como pagada en la MISMA transacción.
-     * - Si algo falla, hace rollback y retorna -1.
-     */
+    // Registra un pago completo y marca la cuota como pagada
     public static int registrarPagoCompleto(int idCuota, double montoEsperado, String metodo, String obs, LocalDate fecha) {
         String insertPago = "INSERT INTO pagos (id_cuota, fecha_pago, monto_pagado, metodo_pago, observaciones) VALUES (?,?,?,?,?)";
         Connection conn = null;
@@ -23,6 +22,7 @@ public class PagoDAO {
             LocalDate efectiva = (fecha != null) ? fecha : LocalDate.now();
 
             int idPagoGenerado;
+            // Insertar pago
             try (PreparedStatement ps = conn.prepareStatement(insertPago, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, idCuota);
                 ps.setDate(2, Date.valueOf(efectiva));
@@ -30,15 +30,15 @@ public class PagoDAO {
                 ps.setString(4, metodo);
                 ps.setString(5, obs);
                 ps.executeUpdate();
-
+                // Obtener ID de pago generado
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (!rs.next()) throw new SQLException("No se obtuvo ID de pago.");
                     idPagoGenerado = rs.getInt(1);
                 }
             }
-
+            // Marcar cuota como pagada
             CuotaDAO.marcarPagada(idCuota, conn);
-
+            // Si todo bien, commit
             conn.commit();
             return idPagoGenerado;
         } catch (SQLException e) {
@@ -55,6 +55,7 @@ public class PagoDAO {
         return -1;
     }
 
+    // Lista todos los pagos de un cliente, con detalles de cuota y crédito
     public static List<Map<String,Object>> listarPagosPorCliente(int idCliente) {
         List<Map<String,Object>> lista = new ArrayList<>();
         String sql = "SELECT p.id, p.id_cuota, p.fecha_pago, p.monto_pagado, p.metodo_pago, p.observaciones, " +
@@ -64,6 +65,7 @@ public class PagoDAO {
                      "JOIN creditos cr ON cr.id = cu.id_credito " +
                      "WHERE cr.id_cliente = ? " +
                      "ORDER BY p.fecha_pago DESC, p.id DESC";
+        // Ejecutar consulta
         try (Connection conn = ConexionMySQL.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCliente);
@@ -84,16 +86,11 @@ public class PagoDAO {
         } catch (SQLException e) {
             System.out.println("Error listar pagos cliente: " + e.getMessage());
         }
+        // Retornar lista de pagos
         return lista;
     }
 
-    /**
-     * Anula un pago:
-     *  - Recupera id_cuota e id_credito
-     *  - Borra el pago
-     *  - Marca cuota 'pendiente'
-     *  - Si el crédito estaba 'cancelado', lo regresa a 'vigente'
-     */
+    // Anula un pago, elimina el registro y actualiza cuota y crédito si es necesario
     public static boolean anularPago(int idPago) {
         String select = "SELECT p.id_cuota, cu.id_credito, cr.estado AS estado_credito " +
                         "FROM pagos p " +
@@ -103,14 +100,14 @@ public class PagoDAO {
         String deletePago = "DELETE FROM pagos WHERE id = ?";
         String updateCuota = "UPDATE cuotas SET estado='pendiente' WHERE id=? AND estado='pagada'";
         String updateCreditoVigente = "UPDATE creditos SET estado='vigente' WHERE id=? AND estado='cancelado'";
-
         Connection conn = null;
+        // Ejecutar transacción
         try {
             conn = ConexionMySQL.getConnection();
             conn.setAutoCommit(false);
-
             int idCuota;
             int idCredito;
+            // Obtener datos del pago
             try (PreparedStatement psSel = conn.prepareStatement(select)) {
                 psSel.setInt(1, idPago);
                 try (ResultSet rs = psSel.executeQuery()) {
@@ -122,24 +119,25 @@ public class PagoDAO {
                     idCredito = rs.getInt("id_credito");
                 }
             }
-
+            // Eliminar pago
             try (PreparedStatement psDel = conn.prepareStatement(deletePago)) {
                 psDel.setInt(1, idPago);
                 psDel.executeUpdate();
             }
-
+            // Actualizar estado de cuota
             try (PreparedStatement psCuota = conn.prepareStatement(updateCuota)) {
                 psCuota.setInt(1, idCuota);
                 psCuota.executeUpdate();
             }
-
+            // Actualizar estado de crédito si es necesario
             try (PreparedStatement psCred = conn.prepareStatement(updateCreditoVigente)) {
                 psCred.setInt(1, idCredito);
                 psCred.executeUpdate();
             }
-
+            // Commit si todo bien
             conn.commit();
-            return true;
+            // Retornar true
+            return true; 
         } catch (SQLException e) {
             System.out.println("Error anular pago: " + e.getMessage());
             if (conn != null) {

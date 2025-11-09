@@ -1,3 +1,5 @@
+// Panel para pagar cuota de crédito
+
 package View.Pagos;
 
 import Controller.ClienteController;
@@ -11,17 +13,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Panel de pago de cuota:
- *  - Seleccionar cliente
- *  - Cargar cuotas pendientes de créditos vigentes
- *  - Seleccionar cuota pendiente (combo muestra: Crédito #X | Cuota #Y | $monto)
- *  - Elegir método de pago y (opcional) observaciones
- *  - Botón pagar (usa fecha hoy)
- *  - Emite recibo al pagar
- */
-public class PagarCuotaPanel extends JPanel {
 
+public class PagarCuotaPanel extends JPanel {
+    
+    // Componentes del panel
     private JComboBox<Cliente> clienteCombo;
     private JComboBox<Map<String,Object>> cuotaCombo;
     private JButton cargarCuotasBtn;
@@ -29,16 +24,16 @@ public class PagarCuotaPanel extends JPanel {
     // Nuevos campos
     private JComboBox<String> metodoCombo;
     private JTextField obsField;
-
     private JButton pagarBtn;
 
+    // Constructor
     public PagarCuotaPanel() {
         setBackground(new Color(245,249,255));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets=new Insets(10,15,10,15);
         gbc.fill=GridBagConstraints.HORIZONTAL;
-
+        // Título
         JLabel title = new JLabel("Pagar Cuota");
         title.setFont(new Font("Segoe UI", Font.BOLD, 24));
         title.setForeground(new Color(56,81,145));
@@ -114,6 +109,7 @@ public class PagarCuotaPanel extends JPanel {
         pagarBtn.addActionListener(e -> pagarSeleccionada());
     }
 
+    // Método auxiliar para agregar etiquetas
     private void addLabel(String txt, GridBagConstraints gbc,int x,int y){
         JLabel l=new JLabel(txt);
         l.setForeground(new Color(56,81,145));
@@ -122,12 +118,14 @@ public class PagarCuotaPanel extends JPanel {
         add(l, gbc);
     }
 
+    // Cargar clientes en el combo
     private void cargarClientes() {
         clienteCombo.removeAllItems();
         List<Cliente> clientes = ClienteController.listarClientes();
         for (Cliente c : clientes) clienteCombo.addItem(c);
     }
 
+    // Cargar cuotas pendientes del cliente seleccionado
     private void cargarCuotasPendientes() {
         cuotaCombo.removeAllItems();
         Cliente c = (Cliente) clienteCombo.getSelectedItem();
@@ -139,6 +137,7 @@ public class PagarCuotaPanel extends JPanel {
         }
     }
 
+    // Pagar la cuota seleccionada
     private void pagarSeleccionada() {
         @SuppressWarnings("unchecked")
         Map<String,Object> sel = (Map<String,Object>) cuotaCombo.getSelectedItem();

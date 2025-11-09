@@ -1,5 +1,9 @@
+// Model/Cliente.java
+// Modelo para la entidad Cliente
+
 package Model;
 
+// Clase Cliente con atributos básicos
 public class Cliente {
     private int id;
     private String nombre;
@@ -8,7 +12,7 @@ public class Cliente {
     private String telefono;
     private String email;
 
-    // Constructor
+    // Constructor completo
     public Cliente(int id, String nombre, String documento, String direccion, String telefono, String email) {
         this.id = id;
         this.nombre = nombre;
@@ -18,6 +22,7 @@ public class Cliente {
         this.email = email;
     }
 
+    // Constructor sin ID (para nuevos clientes)
     public Cliente(String nombre, String documento, String direccion, String telefono, String email) {
         this.nombre = nombre;
         this.documento = documento;
@@ -35,7 +40,7 @@ public class Cliente {
     public String getEmail() { return email; }
 
 
-    // Agrega este método para mostrar el nombre e ID en el JComboBox
+    // Método para mostrar el nombre e ID en el JComboBox
     @Override
     public String toString() {
         return nombre + " (ID: " + id + ")";

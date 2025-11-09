@@ -1,3 +1,6 @@
+// DeudaDAO.java
+// DAO para 'deudas'.
+
 package Dao;
 
 import java.sql.*;
@@ -5,6 +8,7 @@ import java.util.*;
 
 public class DeudaDAO {
 
+    // Resumen de deuda de un cliente
     public static Map<String,Double> resumenDeudaCliente(int idCliente) {
         Map<String,Double> res = new HashMap<>();
         Integer loteActual = VariablesDAO.getNroLote();
@@ -14,6 +18,7 @@ public class DeudaDAO {
             res.put("mora", 0.0);
             return res;
         }
+        // Consulta SQL para obtener los totales de deuda
         String sql =
             "SELECT " +
             " SUM(CASE WHEN cu.estado IN ('pendiente','mora') THEN cu.monto ELSE 0 END) AS deuda_total, " +
@@ -21,7 +26,7 @@ public class DeudaDAO {
             " SUM(CASE WHEN cu.estado='mora' THEN cu.monto ELSE 0 END) AS deuda_mora " +
             "FROM cuotas cu JOIN creditos cr ON cr.id = cu.id_credito " +
             "WHERE cr.id_cliente = ?";
-
+        // Ejecutar la consulta y obtener resultados
         try (Connection conn = ConexionMySQL.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, loteActual);
@@ -39,9 +44,11 @@ public class DeudaDAO {
             res.put("actual", 0.0);
             res.put("mora", 0.0);
         }
+        // Retornar resumen de deuda
         return res;
     }
 
+    // Detalle de cuotas pendientes de un cliente
     public static List<Map<String,Object>> detalleCuotasPendientes(int idCliente) {
         List<Map<String,Object>> list = new ArrayList<>();
         Integer loteActual = VariablesDAO.getNroLote();

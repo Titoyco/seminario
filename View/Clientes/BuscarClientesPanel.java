@@ -1,3 +1,6 @@
+// BuscarClientesPanel.java
+// Panel para buscar clientes por nombre o documento y mostrar resultados en una tabla
+
 package View.Clientes;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -7,24 +10,22 @@ import java.util.List;
 import Model.Cliente;
 import Controller.ClienteController;
 
-/**
- * Panel para buscar clientes por nombre o documento y mostrar los resultados en una tabla,
- * con botones de acción para modificar, eliminar, ver préstamos y ver pagos.
- */
+// Panel para buscar clientes y mostrar resultados
 public class BuscarClientesPanel extends JPanel {
+
+    // Componentes del panel
     private JTextField nombreField;
     private JTextField documentoField;
     private JButton buscarBtn;
     private JTable tablaResultados;
     private DefaultTableModel modeloTabla;
-
-    // Botones de acción
     private JButton modificarBtn;
     private JButton eliminarBtn;
     private JButton verCreditosBtn;
     private JButton verPagosBtn;
     private JButton verDeudaBtn;
 
+    // Constructor del panel
     public BuscarClientesPanel() {
         setLayout(new GridBagLayout());
         setBackground(new Color(245, 249, 255));
@@ -45,7 +46,6 @@ public class BuscarClientesPanel extends JPanel {
         nombreLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         add(nombreLabel, gbc);
-
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         nombreField.setPreferredSize(new Dimension(200, 28));
@@ -58,7 +58,6 @@ public class BuscarClientesPanel extends JPanel {
         documentoLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 2;
         add(documentoLabel, gbc);
-
         documentoField = new JTextField();
         documentoField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         documentoField.setPreferredSize(new Dimension(200, 28));
@@ -116,10 +115,10 @@ public class BuscarClientesPanel extends JPanel {
     private void buscarClientes() {
         String nombre = nombreField.getText().trim().toLowerCase();
         String documento = documentoField.getText().trim().toLowerCase();
-
+        // Obtener lista de clientes desde el controlador
         List<Cliente> clientes = ClienteController.listarClientes();
         modeloTabla.setRowCount(0);
-
+        // Filtrar y agregar a la tabla
         for (Cliente c : clientes) {
             boolean coincideNombre = nombre.isEmpty() || c.getNombre().toLowerCase().contains(nombre);
             boolean coincideDoc = documento.isEmpty() || c.getDocumento().toLowerCase().contains(documento);

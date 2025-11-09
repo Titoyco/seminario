@@ -1,18 +1,22 @@
+// CreditoDAO.java
+// DAO para la tabla 'creditos'.
+// Crea crédito + cuotas en una transacción.
+
 package Dao;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Model.Credito;
 import Model.Cuota;
 
-/**
- * DAO para la tabla 'creditos'.
- * Crea crédito + cuotas en una transacción.
- */
+
 public class CreditoDAO {
 
+    // Mapea un ResultSet a un objeto Credito
     private static Credito map(ResultSet rs) throws SQLException {
         return new Credito(
             rs.getInt("id"),
@@ -27,6 +31,7 @@ public class CreditoDAO {
         );
     }
 
+    // Busca un crédito por su ID
     public static Credito buscarPorId(int id) {
         String sql = "SELECT * FROM creditos WHERE id = ?";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -41,6 +46,7 @@ public class CreditoDAO {
         return null;
     }
 
+    // Lista créditos por ID de cliente
     public static List<Credito> listarPorCliente(int idCliente) {
         List<Credito> list = new ArrayList<>();
         String sql = "SELECT * FROM creditos WHERE id_cliente = ? ORDER BY id DESC";
@@ -56,6 +62,7 @@ public class CreditoDAO {
         return list;
     }
 
+    // Lista todos los créditos
     public static List<Credito> listarTodos() {
         List<Credito> list = new ArrayList<>();
         String sql = "SELECT * FROM creditos ORDER BY id DESC";
@@ -69,6 +76,7 @@ public class CreditoDAO {
         return list;
     }
 
+    // Actualiza el estado de un crédito
     public static boolean actualizarEstado(int idCredito, String nuevoEstado) {
         String sql = "UPDATE creditos SET estado = ? WHERE id = ?";
         try (Connection conn = ConexionMySQL.getConnection();
@@ -82,17 +90,17 @@ public class CreditoDAO {
         return false;
     }
 
+    // Crea un crédito y sus cuotas en una transacción
     public static int crearCreditoConCuotas(Credito credito, List<Cuota> cuotas, int loteOrigen) {
         String sqlCredito = "INSERT INTO creditos (id_cliente, monto, fecha_otorgado, tasa_interes, cantidad_cuotas, estado, lote_origen) " +
                             "VALUES (?,?,?,?,?,'vigente',?)";
         String sqlCuota = "INSERT INTO cuotas (id_credito, numero, monto, estado) VALUES (?,?,?,'pendiente')";
-
         Connection conn = null;
         try {
             conn = ConexionMySQL.getConnection();
             conn.setAutoCommit(false);
-
             int idCreditoGenerado;
+            // Insertar crédito
             try (PreparedStatement ps = conn.prepareStatement(sqlCredito, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, credito.getIdCliente());
                 ps.setDouble(2, credito.getMontoTotal());
@@ -106,7 +114,7 @@ public class CreditoDAO {
                     idCreditoGenerado = rs.getInt(1);
                 }
             }
-
+            // Insertar cuotas
             try (PreparedStatement psCuota = conn.prepareStatement(sqlCuota)) {
                 for (Cuota c : cuotas) {
                     psCuota.setInt(1, idCreditoGenerado);
@@ -116,9 +124,11 @@ public class CreditoDAO {
                 }
                 psCuota.executeBatch();
             }
-
+            // Confirmar transacción
             conn.commit();
+            // Retornar ID del crédito creado
             return idCreditoGenerado;
+            // Manejo de errores y rollback
         } catch (SQLException e) {
             System.out.println("Error transaccional crear crédito: " + e.getMessage());
             if (conn != null) {
@@ -131,5 +141,26 @@ public class CreditoDAO {
             }
         }
         return -1;
+    }
+
+    // Retorna la lista de cuotas de un crédito.
+    public static List<Map<String,Object>> cuotasDeCredito(int idCredito) {
+        List<Map<String,Object>> list = new ArrayList<>();
+        String sql = "SELECT numero, monto FROM cuotas WHERE id_credito = ? ORDER BY numero ASC";
+        try (Connection conn = ConexionMySQL.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCredito);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String,Object> fila = new HashMap<>();
+                    fila.put("numero", rs.getInt("numero"));
+                    fila.put("monto", rs.getDouble("monto"));
+                    list.add(fila);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error cuotasDeCredito: " + e.getMessage());
+        }
+        return list;
     }
 }

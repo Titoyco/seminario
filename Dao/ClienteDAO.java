@@ -1,3 +1,6 @@
+// ClienteDAO.java
+// DAO (Data Access Object) para la entidad Cliente
+
 package Dao;
 import java.sql.*;
 import java.util.*;
@@ -6,6 +9,7 @@ import Model.Cliente;
 
 public class ClienteDAO {
 
+    // Inserta un nuevo cliente en la base de datos
         public static boolean insertar(Cliente cliente) {
         String sql = "INSERT INTO clientes (nombre, documento, direccion, telefono, email) VALUES (?, ?, ?, ?, ?)";
 
@@ -26,6 +30,7 @@ public class ClienteDAO {
         return false;
     }
 
+    // Modifica un cliente existente en la base de datos
     public static boolean modificar(Cliente cliente) {
         String sql = "UPDATE clientes SET nombre = ?, documento = ?, direccion = ?, telefono = ?, email = ? WHERE id = ?";
 
@@ -47,6 +52,7 @@ public class ClienteDAO {
         return false;
     }
 
+    // Devuelve una lista con todos los clientes
     public static List<Cliente> getTodos() {
         List<Cliente> lista = new ArrayList<>();
         try (Connection conn = ConexionMySQL.getConnection();
@@ -68,6 +74,7 @@ public class ClienteDAO {
         return lista;
     }
 
+    // Elimina un cliente por su ID
     public static boolean eliminarPorId(int id) {
         try (Connection conn = ConexionMySQL.getConnection();
              PreparedStatement ps = conn.prepareStatement("DELETE FROM clientes WHERE id = ?")) {
@@ -80,6 +87,7 @@ public class ClienteDAO {
         return false;
     }
 
+    // Busca un cliente por su ID
     public static Cliente buscarPorId(int id) {
         Cliente cliente = null;
         try (Connection conn = ConexionMySQL.getConnection();

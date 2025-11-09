@@ -1,3 +1,5 @@
+// Controlador para gestionar las operaciones relacionadas con los créditos.
+
 package Controller;
 
 import Model.Credito;
@@ -23,14 +25,16 @@ import Dao.VariablesDAO;
  *   n = cantidad de cuotas
  *   i = interesMensualDecimal (por ejemplo 0.05 si en variables.interes_mensual = 0.0500)
  *
- * NOTA: En la tabla 'creditos.monto' se sigue guardando el capital original.
+ * En la tabla 'creditos.monto' se sigue guardando el capital original.
  * Las cuotas incluyen capital + interés total distribuido.
  */
+
 public class CreditoController {
 
     /**
      * @param tasaInteres (IGNORADO si es > 0: siempre se usa variables.interes_mensual)
      */
+
     public static int crearCredito(int idCliente, double monto, double tasaInteres, int cantCuotas, LocalDate fecha) {
         Integer loteActual = VariablesDAO.getNroLote();
         if (loteActual == null) {
@@ -61,11 +65,12 @@ public class CreditoController {
     }
 
     /**
-     * Genera la lista de cuotas aplicando la fórmula lineal definida.
+     * Genera la lista de cuotas.
      * total = monto * (1 + n * i)
      * Se prorratea en n cuotas; se redondea cada cuota a 2 decimales
      * usando floor en las primeras (para no pasarnos) y la última ajusta la diferencia.
      */
+    
     private static List<Cuota> generarCuotasConInteres(double montoCapital, int cantCuotas, double interesMensualDecimal) {
         List<Cuota> list = new ArrayList<>();
         if (cantCuotas <= 0) return list;

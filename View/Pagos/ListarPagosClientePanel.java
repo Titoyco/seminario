@@ -1,3 +1,6 @@
+// ListarPagosClientePanel.java
+// Panel para listar pagos por cliente
+
 package View.Pagos;
 
 import Controller.ClienteController;
@@ -10,20 +13,18 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Panel para listar pagos por cliente.
- */
 public class ListarPagosClientePanel extends JPanel {
-
+    // Componentes del panel
     private JComboBox<Cliente> clienteCombo;
     private JButton cargarBtn;
     private JTable tabla;
     private DefaultTableModel modelo;
 
+    // Constructor
     public ListarPagosClientePanel() {
         setLayout(new BorderLayout());
         setBackground(new Color(245,249,255));
-
+        // Top panel
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.setBackground(new Color(245,249,255));
         top.add(new JLabel("Cliente:"));
@@ -32,9 +33,8 @@ public class ListarPagosClientePanel extends JPanel {
         top.add(clienteCombo);
         cargarBtn = new JButton("Cargar Pagos");
         top.add(cargarBtn);
-
         add(top, BorderLayout.NORTH);
-
+        // Tabla de pagos
         modelo = new DefaultTableModel(new Object[]{
                 "ID Pago","Fecha","Crédito","Cuota","Monto","Método","Obs"
         },0){
@@ -42,10 +42,11 @@ public class ListarPagosClientePanel extends JPanel {
         };
         tabla = new JTable(modelo);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
-
+        // Listeners
         cargarBtn.addActionListener(e -> cargarPagos());
     }
 
+    // Cargar clientes en el combo
     private void cargarClientes() {
         clienteCombo.removeAllItems();
         for (Cliente c : ClienteController.listarClientes()) {
@@ -53,6 +54,7 @@ public class ListarPagosClientePanel extends JPanel {
         }
     }
 
+    // Cargar pagos del cliente seleccionado
     private void cargarPagos() {
         modelo.setRowCount(0);
         Cliente c = (Cliente) clienteCombo.getSelectedItem();
@@ -71,6 +73,7 @@ public class ListarPagosClientePanel extends JPanel {
         }
     }
 
+    // Obtener ID del pago seleccionado
     public Integer getPagoSeleccionadoId() {
         int fila = tabla.getSelectedRow();
         if (fila < 0) return null;

@@ -1,3 +1,6 @@
+// AnularPagoPanel.java
+// Panel para anular un pago
+
 package View.Pagos;
 
 import Controller.ClienteController;
@@ -9,53 +12,50 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Panel para anular un pago:
- *  - Seleccionar cliente
- *  - Listar pagos
- *  - Seleccionar un pago y anular
- */
 public class AnularPagoPanel extends JPanel {
 
+    //  Componentes del panel
     private JComboBox<Cliente> clienteCombo;
     private JButton cargarBtn;
     private JButton anularBtn;
     private JTable tabla;
     private PagosTableModel modelo;
 
+    // Constructor
     public AnularPagoPanel() {
         setLayout(new BorderLayout());
         setBackground(new Color(245,249,255));
-
+        // Top panel
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.setBackground(new Color(245,249,255));
         top.add(new JLabel("Cliente:"));
         clienteCombo = new JComboBox<>();
         cargarClientes();
         top.add(clienteCombo);
-
+        // Boton cargar pagos
         cargarBtn = new JButton("Cargar Pagos");
         top.add(cargarBtn);
-
+        // Boton anular pago
         anularBtn = new JButton("Anular Pago Seleccionado");
         top.add(anularBtn);
-
         add(top, BorderLayout.NORTH);
-
+        // Tabla de pagos
         modelo = new PagosTableModel();
         tabla = new JTable(modelo);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
-
+        // Listeners
         cargarBtn.addActionListener(e -> cargarPagos());
         anularBtn.addActionListener(e -> anularSeleccion());
     }
 
+    // Cargar clientes en el combo
     private void cargarClientes(){
         clienteCombo.removeAllItems();
         List<Cliente> clientes = ClienteController.listarClientes();
         for (Cliente c : clientes) clienteCombo.addItem(c);
     }
 
+    // Cargar pagos del cliente seleccionado
     private void cargarPagos() {
         modelo.clear();
         Cliente c = (Cliente) clienteCombo.getSelectedItem();
@@ -64,6 +64,7 @@ public class AnularPagoPanel extends JPanel {
         for (Map<String,Object> p : pagos) modelo.addPago(p);
     }
 
+    // Anular pago seleccionado
     private void anularSeleccion() {
         int fila = tabla.getSelectedRow();
         if (fila < 0) {

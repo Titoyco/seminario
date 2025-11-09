@@ -1,3 +1,6 @@
+// ModificarClientePanel.java
+// Panel para modificar los datos de un cliente
+
 package View.Clientes;
 import javax.swing.*;
 import java.awt.*;
@@ -5,12 +8,10 @@ import java.awt.event.ActionListener;
 import Model.Cliente;
 import Controller.ClienteController;
 
-/**
- * Panel para modificar los datos de un cliente.
- * Si se pasa un id por parámetro, el combo muestra ese cliente como seleccionado.
- * Si no, muestra el primero de la lista.
- */
+
 public class ModificarClientePanel extends JPanel {
+
+    // Componentes del panel
     private JComboBox<Cliente> clientesCombo;
     private JTextField nombreField;
     private JTextField docField;
@@ -45,10 +46,8 @@ public class ModificarClientePanel extends JPanel {
         clienteLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         add(clienteLabel, gbc);
-
         clientesCombo = new JComboBox<>();
         cargarClientes(); // Llena el combo
-
         clientesCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         gbc.gridx = 1; gbc.gridy = 1;
         add(clientesCombo, gbc);
@@ -71,7 +70,6 @@ public class ModificarClientePanel extends JPanel {
         nombreLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 2;
         add(nombreLabel, gbc);
-
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         nombreField.setBackground(Color.WHITE);
@@ -85,7 +83,6 @@ public class ModificarClientePanel extends JPanel {
         docLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 3;
         add(docLabel, gbc);
-
         docField = new JTextField();
         docField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         docField.setBackground(Color.WHITE);
@@ -99,7 +96,6 @@ public class ModificarClientePanel extends JPanel {
         dirLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 4;
         add(dirLabel, gbc);
-
         dirField = new JTextField();
         dirField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         dirField.setBackground(Color.WHITE);
@@ -113,7 +109,6 @@ public class ModificarClientePanel extends JPanel {
         telLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 5;
         add(telLabel, gbc);
-
         telField = new JTextField();
         telField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         telField.setBackground(Color.WHITE);
@@ -127,7 +122,6 @@ public class ModificarClientePanel extends JPanel {
         emailLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 6;
         add(emailLabel, gbc);
-
         emailField = new JTextField();
         emailField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         emailField.setForeground(new Color(56, 81, 145));

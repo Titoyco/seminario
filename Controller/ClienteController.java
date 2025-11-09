@@ -1,3 +1,6 @@
+// ClienteController.java
+// Controlador para gestionar las operaciones relacionadas con los clientes.
+
 package Controller;
 import Model.Cliente;
 
@@ -23,12 +26,12 @@ public class ClienteController {
         return ClienteDAO.getTodos();
     }
 
-    // Buscar cliente por ID (opcional, útil para editar/buscar)
+    // Buscar cliente por ID
     public static Cliente buscarClientePorId(int idCliente) {
         return ClienteDAO.buscarPorId(idCliente);
     }
 
-    // Modificar cliente (opcional)
+    // Modificar cliente
     public static boolean modificarCliente(Cliente cliente) {
         return ClienteDAO.modificar(cliente);
     }

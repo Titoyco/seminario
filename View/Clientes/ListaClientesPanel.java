@@ -1,3 +1,6 @@
+// ListaClientesPanel.java
+// Panel para mostrar la lista de clientes
+
 package View.Clientes;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -6,18 +9,20 @@ import java.util.List;
 import Model.Cliente;
 
 public class ListaClientesPanel extends JPanel {
+    
+    // Componentes del panel
     private JTable tabla;
     private DefaultTableModel modelo;
 
+    // Constructor
     public ListaClientesPanel() {
         setLayout(new BorderLayout());
-
         // Columnas
         String[] columnas = {"ID", "Nombre", "Documento", "Dirección", "Teléfono", "Email"};
         modelo = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modelo);
         tabla.setFillsViewportHeight(true);
-
+        // Añadir componentes
         add(new JLabel("Listado de Clientes", JLabel.CENTER), BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
     }

@@ -1,13 +1,12 @@
+// AltaClientePanel.java
+// Panel para el alta de clientes
+
 package View.Clientes;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 
-/**
- * Panel para el alta de clientes, con formato mejorado, comentarios explicativos
- * y ancho mínimo de los campos de entrada establecido en 300px.
- */
 public class AltaClientePanel extends JPanel {
     // Campos de texto para el formulario (declarados globalmente para accederlos desde otros métodos)
     private JTextField nombreField;
@@ -17,6 +16,7 @@ public class AltaClientePanel extends JPanel {
     private JTextField emailField;
     private JButton guardarBtn;
 
+    // Constructor del panel
     public AltaClientePanel() {
         // Establece el color de fondo suave y moderno (igual que LoginPanel)
         setBackground(new Color(245, 249, 255));
@@ -40,7 +40,6 @@ public class AltaClientePanel extends JPanel {
         nombreLabel.setForeground(new Color(56, 81, 145)); // Azul suave
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         add(nombreLabel, gbc);
-
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         nombreField.setBackground(Color.WHITE); // Fondo claro
@@ -54,7 +53,6 @@ public class AltaClientePanel extends JPanel {
         docLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 2;
         add(docLabel, gbc);
-
         docField = new JTextField();
         docField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         docField.setBackground(Color.WHITE);
@@ -68,7 +66,6 @@ public class AltaClientePanel extends JPanel {
         dirLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 3;
         add(dirLabel, gbc);
-
         dirField = new JTextField();
         dirField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         dirField.setBackground(Color.WHITE);
@@ -82,7 +79,6 @@ public class AltaClientePanel extends JPanel {
         telLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 4;
         add(telLabel, gbc);
-
         telField = new JTextField();
         telField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         telField.setBackground(Color.WHITE);
@@ -96,7 +92,6 @@ public class AltaClientePanel extends JPanel {
         emailLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 5;
         add(emailLabel, gbc);
-
         emailField = new JTextField();
         emailField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         emailField.setForeground(new Color(56, 81, 145));
