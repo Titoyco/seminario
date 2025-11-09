@@ -125,6 +125,9 @@ public class MainWindow extends JFrame {
         JMenuItem deudaClienteItem = new JMenuItem("Deuda por Cliente");
         deudaClienteItem.addActionListener(e -> mostrarDeudaClientePanel());
         deudasMenu.add(deudaClienteItem);
+        JMenuItem listarDeudasItem = new JMenuItem("Listar Deudas por Cliente");
+        listarDeudasItem.addActionListener(e -> mostrarListarDeudas());
+        deudasMenu.add(listarDeudasItem);
         menuBar.add(deudasMenu);
 
         // ---- Menú Lote ----
@@ -186,6 +189,13 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
+    // Mostrar listado de deudas por cliente
+    private void mostrarListarDeudas() {
+        mainPanel.removeAll();
+        View.Deudas.ListarDeudasPanel panel = new View.Deudas.ListarDeudasPanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
 
     // Mostrar AnularPagoPanel
     private void mostrarAnularPago() {
@@ -309,9 +319,8 @@ private void mostrarBuscarClientesPanel() {
         Integer id = panel.getClienteSeleccionadoId();
         if (id != null) {
             mainPanel.removeAll();
-            DeudaClientePanel deudaPanel = new DeudaClientePanel(0, () -> mostrarBuscarClientesPanel());
-            // forzamos la selección del cliente pedido
-            deudaPanel.seleccionarClientePorId(id);
+            // Pasamos el id al constructor para que cargarClientes() lo tenga desde el inicio
+            DeudaClientePanel deudaPanel = new DeudaClientePanel(id, () -> mostrarBuscarClientesPanel());
             mainPanel.add(deudaPanel, BorderLayout.CENTER);
             refrescar();
         } else {

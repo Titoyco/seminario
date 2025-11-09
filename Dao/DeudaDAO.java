@@ -82,4 +82,50 @@ public class DeudaDAO {
         }
         return list;
     }
+
+    /**
+     * Lista el resumen de deuda por cliente.
+     * Retorna una lista de mapas con claves:
+     *   id_cliente (Integer), nombre_cliente (String),
+     *   deuda_total (Double), deuda_actual (Double), deuda_mora (Double)
+     *
+     * Incluye todos los clientes (las sumas pueden ser 0.0).
+     */
+    public static List<Map<String,Object>> listarResumenDeudaPorClientes() {
+        List<Map<String,Object>> lista = new ArrayList<>();
+        Integer loteActual = VariablesDAO.getNroLote();
+        if (loteActual == null) loteActual = 0;
+
+        String sql =
+            "SELECT cl.id AS id_cliente, cl.nombre AS nombre_cliente, " +
+            "  COALESCE(SUM(CASE WHEN cu.estado IN ('pendiente','mora') THEN cu.monto ELSE 0 END),0) AS deuda_total, " +
+            "  COALESCE(SUM(CASE WHEN cu.estado IN ('pendiente','mora') AND (cr.lote_origen + cu.numero) <= ? THEN cu.monto ELSE 0 END),0) AS deuda_actual, " +
+            "  COALESCE(SUM(CASE WHEN cu.estado='mora' THEN cu.monto ELSE 0 END),0) AS deuda_mora " +
+            "FROM clientes cl " +
+            "LEFT JOIN creditos cr ON cr.id_cliente = cl.id " +
+            "LEFT JOIN cuotas cu ON cu.id_credito = cr.id " +
+            "GROUP BY cl.id, cl.nombre " +
+            "ORDER BY cl.nombre ASC";
+
+        try (Connection conn = ConexionMySQL.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, loteActual);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String,Object> m = new HashMap<>();
+                    m.put("id_cliente", rs.getInt("id_cliente"));
+                    m.put("nombre_cliente", rs.getString("nombre_cliente"));
+                    m.put("deuda_total", rs.getDouble("deuda_total"));
+                    m.put("deuda_actual", rs.getDouble("deuda_actual"));
+                    m.put("deuda_mora", rs.getDouble("deuda_mora"));
+                    lista.add(m);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error listarResumenDeudaPorClientes: " + e.getMessage());
+        }
+        return lista;
+    }
+
+
 }
