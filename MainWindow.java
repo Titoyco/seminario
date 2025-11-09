@@ -158,14 +158,21 @@ public class MainWindow extends JFrame {
         mainPanel.removeAll(); // Limpiar el panel principal
         JPanel bienvenidaPanel = new JPanel(new BorderLayout());
         bienvenidaPanel.setBackground(new Color(245, 249, 255));
-        // Logo
+
+        // Logo (centrado)
         JLabel logo = new JLabel(new ImageIcon("img/logo.png"));
-        bienvenidaPanel.add(logo, BorderLayout.NORTH);
+        logo.setHorizontalAlignment(JLabel.CENTER);
+
+        // Texto de bienvenida (más arriba)
         JLabel bienvenida = new JLabel("Bienvenido al sistema", JLabel.CENTER);
-        bienvenida.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        bienvenida.setFont(new Font("Segoe UI", Font.BOLD, 44));
         bienvenida.setForeground(new Color(56, 81, 145));
-        bienvenida.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
-        bienvenidaPanel.add(bienvenida, BorderLayout.CENTER);
+        bienvenida.setBorder(BorderFactory.createEmptyBorder(100, 20, 10, 20));
+
+        // Añadir la etiqueta en la parte superior y el logo en el centro
+        bienvenidaPanel.add(bienvenida, BorderLayout.NORTH);
+        bienvenidaPanel.add(logo, BorderLayout.CENTER);
+
         mainPanel.add(bienvenidaPanel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -280,64 +287,41 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    //  Mostrar BuscarClientesPanel
-    private void mostrarBuscarClientesPanel() {
-        mainPanel.removeAll();
-        BuscarClientesPanel panel = new BuscarClientesPanel();
+ //  Mostrar BuscarClientesPanel
+private void mostrarBuscarClientesPanel() {
+    mainPanel.removeAll();
+    BuscarClientesPanel panel = new BuscarClientesPanel();
 
-        panel.setModificarListener(e -> {
-            Integer id = panel.getClienteSeleccionadoId();
-            if (id != null) mostrarModificarClientePanel(id);
-            else JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
-        });
+    panel.setModificarListener(e -> {
+        Integer id = panel.getClienteSeleccionadoId();
+        if (id != null) mostrarModificarClientePanel(id);
+        else JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+    });
 
-        panel.setEliminarListener(e -> {
-            Integer id = panel.getClienteSeleccionadoId();
-            if (id != null) mostrarBajaClientePanel(id);
-            else JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
-        });
-/* 
-        panel.setVerCreditosListener(e -> {
-            Integer id = panel.getClienteSeleccionadoId();
-            if (id != null) {
-                mainPanel.removeAll();
-                ListarCreditosClientePanel creditosPanel = new ListarCreditosClientePanel(id);
-                mainPanel.add(creditosPanel, BorderLayout.CENTER);
-                refrescar();
-            } else {
-                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
-            }
-        });
+    panel.setEliminarListener(e -> {
+        Integer id = panel.getClienteSeleccionadoId();
+        if (id != null) mostrarBajaClientePanel(id);
+        else JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+    });
 
-        panel.setVerPagosListener(e -> {
-            Integer id = panel.getClienteSeleccionadoId();
-            if (id != null) {
-                mainPanel.removeAll();
-                ListarPagosClientePanel pagosPanel = new ListarPagosClientePanel(id);
-                mainPanel.add(pagosPanel, BorderLayout.CENTER);
-                refrescar();
-            } else {
-                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
-            }
-        });
-*/
+    // Si el usuario pulsa "Ver Deuda" abrimos DeudaClientePanel pasando el ID seleccionado.
+    panel.setVerDeudaListener(e -> {
+        Integer id = panel.getClienteSeleccionadoId();
+        if (id != null) {
+            mainPanel.removeAll();
+            DeudaClientePanel deudaPanel = new DeudaClientePanel(0, () -> mostrarBuscarClientesPanel());
+            // forzamos la selección del cliente pedido
+            deudaPanel.seleccionarClientePorId(id);
+            mainPanel.add(deudaPanel, BorderLayout.CENTER);
+            refrescar();
+        } else {
+            JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
+        }
+    });
 
-        
-        panel.setVerDeudaListener(e -> {
-            Integer id = panel.getClienteSeleccionadoId();
-            if (id != null) {
-                mainPanel.removeAll();
-                DeudaClientePanel deudaPanel = new DeudaClientePanel(id, () -> mostrarBuscarClientesPanel());
-                mainPanel.add(deudaPanel, BorderLayout.CENTER);
-                refrescar();
-            } else {
-                JOptionPane.showMessageDialog(panel, "Seleccione un cliente.");
-            }
-        });
-
-        mainPanel.add(panel, BorderLayout.CENTER);
-        refrescar();
-    }
+    mainPanel.add(panel, BorderLayout.CENTER);
+    refrescar();
+}
 
     /*/ Mostrar DeudaClientePanel
     private void mostrarDeudaCliente(int idCliente) {

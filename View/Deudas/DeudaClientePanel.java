@@ -139,63 +139,97 @@ public class DeudaClientePanel extends JPanel {
         return l;
     }
 
-    // Cargar clientes en el combobox
-    private void cargarClientes() {
-        try {
-            List<Cliente> clientes = ClienteController.listarClientes();
-            comboClientes.removeAllItems();
-
-            if (clientes == null || clientes.isEmpty()) {
-                // No hay clientes: limpiar y mostrar datos vacíos
-                lblCliente.setText("Cliente: -");
-                modelo.setRowCount(0);
-                lblDeudaTotal.setText("Deuda TOTAL: $0.00");
-                lblDeudaActual.setText("Deuda ACTUAL: $0.00");
-                lblDeudaMora.setText("En MORA: $0.00");
+    // Seleccionar cliente por ID (si existe en el combo)
+    public void seleccionarClientePorId(int clienteId) {
+        if (clienteId <= 0 || comboClientes.getItemCount() == 0) return;
+        for (int i = 0; i < comboClientes.getItemCount(); i++) {
+            Cliente c = comboClientes.getItemAt(i);
+            if (c != null && c.getId() == clienteId) {
+                comboClientes.setSelectedIndex(i);
+                // actualizar estado interno y etiqueta
+                this.idCliente = clienteId;
+                lblCliente.setText("Cliente: " + c.getNombre() + " (ID " + clienteId + ")");
+                // cargar los datos para ese cliente
+                cargarDatos();
                 return;
             }
+        }
+        // si no se encuentra, no hacemos nada o podríamos seleccionar el primero
+    }
 
-            // Agregar clientes al combo
-            for (Cliente cliente : clientes) {
-                comboClientes.addItem(cliente);
-            }
 
-            // Intentar seleccionar el cliente pasado por constructor si existe,
-            // de lo contrario seleccionar el primero de la lista.
-            boolean seleccionado = false;
-            if (this.idCliente > 0) {
-                for (int i = 0; i < comboClientes.getItemCount(); i++) {
-                    Cliente it = comboClientes.getItemAt(i);
-                    if (it != null && it.getId() == this.idCliente) {
-                        comboClientes.setSelectedIndex(i);
-                        seleccionado = true;
-                        break;
-                    }
+    // Cargar clientes en el combobox
+  private void cargarClientes() {
+    try {
+        List<Cliente> clientes = ClienteController.listarClientes();
+        // Guardamos y removemos temporalmente los listeners para evitar disparos
+        java.awt.event.ActionListener[] listeners = comboClientes.getActionListeners();
+        for (java.awt.event.ActionListener l : listeners) {
+            comboClientes.removeActionListener(l);
+        }
+
+        comboClientes.removeAllItems();
+
+        if (clientes == null || clientes.isEmpty()) {
+            // No hay clientes: limpiar y mostrar datos vacíos
+            lblCliente.setText("Cliente: -");
+            modelo.setRowCount(0);
+            lblDeudaTotal.setText("Deuda TOTAL: $0.00");
+            lblDeudaActual.setText("Deuda ACTUAL: $0.00");
+            lblDeudaMora.setText("En MORA: $0.00");
+            // Restaurar listeners aunque no haya items
+            for (java.awt.event.ActionListener l : listeners) comboClientes.addActionListener(l);
+            return;
+        }
+
+        // Agregar clientes al combo
+        for (Cliente cliente : clientes) {
+            comboClientes.addItem(cliente);
+        }
+
+        // Buscar índice del cliente solicitado (this.idCliente)
+        int indexToSelect = 0; // por defecto el primero
+        if (this.idCliente > 0) {
+            for (int i = 0; i < comboClientes.getItemCount(); i++) {
+                Cliente it = comboClientes.getItemAt(i);
+                if (it != null && it.getId() == this.idCliente) {
+                    indexToSelect = i;
+                    break;
                 }
             }
-            if (!seleccionado) {
-                comboClientes.setSelectedIndex(0);
-                Cliente primer = (Cliente) comboClientes.getSelectedItem();
-                if (primer != null) this.idCliente = primer.getId();
-            }
+        } else {
+            // actualizar idCliente con el primer elemento
+            Cliente primer = (Cliente) comboClientes.getItemAt(0);
+            if (primer != null) this.idCliente = primer.getId();
+        }
 
-            // Actualizar etiqueta de cliente y cargar datos
-            Cliente clienteActual = ClienteController.buscarClientePorId(this.idCliente);
+        // Selección y restauración de listeners en EDT para asegurar correcta aplicación
+        final int selIndex = indexToSelect;
+        final java.awt.event.ActionListener[] toRestore = listeners;
+        SwingUtilities.invokeLater(() -> {
+            // Seleccionamos el índice encontrado
+            comboClientes.setSelectedIndex(selIndex);
+
+            // Restauramos listeners
+            for (java.awt.event.ActionListener l : toRestore) comboClientes.addActionListener(l);
+
+            // Forzamos actualización de etiqueta y carga de datos con el id actualmente seleccionado
+            Cliente clienteActual = (Cliente) comboClientes.getSelectedItem();
             if (clienteActual != null) {
+                this.idCliente = clienteActual.getId();
                 lblCliente.setText("Cliente: " + clienteActual.getNombre() + " (ID " + this.idCliente + ")");
             } else {
                 lblCliente.setText("Cliente: ID " + this.idCliente);
             }
-
             cargarDatos();
+        });
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error al cargar la lista de clientes: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+                "Error al cargar la lista de clientes: " + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
     }
-
+}
     // Cargar datos de deuda
     private void cargarDatos() {
         if (this.idCliente <= 0) {
