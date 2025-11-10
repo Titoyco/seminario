@@ -152,6 +152,7 @@ public class PagoDAO {
         return false;
     }
 
+    // Método en PagoDAO que devuelve todos los pagos con JOINs y ordenados por id DESC
     public static List<Map<String,Object>> listarTodosOrdenadosDesc() {
         List<Map<String,Object>> lista = new ArrayList<>();
         String sql =
@@ -163,8 +164,8 @@ public class PagoDAO {
             "JOIN clientes cl ON cl.id = cr.id_cliente " +
             "ORDER BY p.id DESC";
         try (Connection conn = ConexionMySQL.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Map<String,Object> row = new HashMap<>();
                 row.put("id_pago", rs.getInt("id_pago"));

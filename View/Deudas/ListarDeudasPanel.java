@@ -10,15 +10,19 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.text.MessageFormat;
 
 public class ListarDeudasPanel extends JPanel {
 
     private JTable tabla;
     private DefaultTableModel modelo;
-    private JButton refrescarBtn;
+    private JButton cerrarBtn;
+    private JButton imprimirBtn;
     private JLabel tituloLbl;
+    private final Runnable onClose;
 
-    public ListarDeudasPanel() {
+    public ListarDeudasPanel(Runnable onClose) {
+        this.onClose = onClose;
         setLayout(new BorderLayout());
         setBackground(new Color(245,249,255));
 
@@ -42,25 +46,24 @@ public class ListarDeudasPanel extends JPanel {
         // Panel inferior con botón refrescar
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.setBackground(new Color(245,249,255));
-        refrescarBtn = new JButton("Refrescar");
-        bottom.add(refrescarBtn);
+        cerrarBtn = new JButton("Cerrar");
+        imprimirBtn = new JButton("Imprimir");
+        bottom.add(imprimirBtn);
+        bottom.add(cerrarBtn);
         add(bottom, BorderLayout.SOUTH);
 
         // Listeners
-        refrescarBtn.addActionListener(e -> cargar());
+        cerrarBtn.addActionListener(e -> cerrar());
+        imprimirBtn.addActionListener(e -> imprimir());       
 
         // Carga inicial
         cargar();
     }
 
-    // Carga datos desde DAO
-    private void cargar() {
+        // dentro de ListarDeudasPanel
+    public void setDeudas(List<Map<String,Object>> rows) {
         modelo.setRowCount(0);
-        List<Map<String,Object>> rows = DeudaDAO.listarResumenDeudaPorClientes();
-        if (rows == null || rows.isEmpty()) {
-            // dejar tabla vacía
-            return;
-        }
+        if (rows == null) return;
         for (Map<String,Object> r : rows) {
             Integer id = r.get("id_cliente") != null ? (Integer) r.get("id_cliente") : null;
             String nombre = r.get("nombre_cliente") != null ? r.get("nombre_cliente").toString() : "-";
@@ -75,6 +78,32 @@ public class ListarDeudasPanel extends JPanel {
                     String.format("%.2f", actual),
                     String.format("%.2f", mora)
             });
+        }
+    }
+
+    //  Método para cargar los datos iniciales
+    private void cargar() {
+        setDeudas(DeudaDAO.listarResumenDeudaPorClientes());
+    }
+
+    // Método para cerrar el panel y volver a la ventana principal
+    private void cerrar() {
+        if (onClose != null) onClose.run();
+    }
+
+    // Método para imprimir el contenido de la tabla
+    private void imprimir() {
+        try {
+            boolean completo = tabla.print(JTable.PrintMode.FIT_WIDTH, 
+                new MessageFormat("Listado de Deudas por Cliente"), 
+                new MessageFormat("Página {0}"));
+            if (completo) {
+                JOptionPane.showMessageDialog(this, "Impresión completada", "Imprimir", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Impresión cancelada", "Imprimir", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al imprimir: " + e.getMessage(), "Imprimir", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

@@ -32,8 +32,9 @@ public class AltaCreditoPanel extends JPanel {
         setBackground(new Color(245, 249, 255));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,15,10,15);
+        gbc.insets = new Insets(12, 18, 12, 18);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
         // Título
         JLabel title = new JLabel("Alta de Crédito");
@@ -70,6 +71,12 @@ public class AltaCreditoPanel extends JPanel {
         crearBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         gbc.gridx=0; gbc.gridy=5; gbc.gridwidth=2;
         add(crearBtn, gbc);
+        // Espacio extra para estética
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        add(Box.createVerticalGlue(), gbc);
         // Cargar interés desde variables
         cargarInteres();
     }

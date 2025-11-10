@@ -104,6 +104,13 @@ public class PagarCuotaPanel extends JPanel {
         gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=3;
         add(pagarBtn, gbc);
 
+        // Espacio extra para estética
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        add(Box.createVerticalGlue(), gbc);
+
         // Listeners
         cargarCuotasBtn.addActionListener(e -> cargarCuotasPendientes());
         pagarBtn.addActionListener(e -> pagarSeleccionada());

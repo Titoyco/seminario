@@ -18,13 +18,15 @@ public class ListarTodosPagosPanel extends JPanel {
     // Componentes del panel
     private JTable tabla;
     private DefaultTableModel modelo;
-    private JButton refrescarBtn;
+    private JButton cerrarBtn;
     private JButton imprimirBtn;
     private JLabel tituloLbl;
     private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final Runnable onClose;
 
     // Constructor del panel
-    public ListarTodosPagosPanel() {
+    public ListarTodosPagosPanel(Runnable onClose) {
+        this.onClose = onClose;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 249, 255));
         // Título
@@ -43,66 +45,68 @@ public class ListarTodosPagosPanel extends JPanel {
         tabla = new JTable(modelo);
         tabla.setFillsViewportHeight(true);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
-        // Panel inferior con botón de refrescar
+        // Panel inferior con botón de cerrar
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.setBackground(new Color(245, 249, 255));
-        refrescarBtn = new JButton("Refrescar");
+        cerrarBtn = new JButton("Cerrar");
         imprimirBtn = new JButton("Imprimir");
         imprimirBtn.addActionListener(e -> imprimirTabla());
-        bottom.add(refrescarBtn);
+        bottom.add(cerrarBtn);
         bottom.add(imprimirBtn);
         add(bottom, BorderLayout.SOUTH);
-        // Acción del botón refrescar
-        refrescarBtn.addActionListener(e -> cargar());
+        // Acción del botón cerrar
+        cerrarBtn.addActionListener(e -> cerrar());
         // carga inicial
         cargar();
     }
 
-    // Método para cargar los datos en la tabla
-   private void cargar() {
+    // Método para establecer los datos en la tabla
+      public void setPagos(List<Map<String,Object>> pagos) {
         modelo.setRowCount(0);
+        if (pagos == null || pagos.isEmpty()) return;
+
+        for (Map<String,Object> p : pagos) {
+            // Fecha
+            Object fechaObj = p.get("fecha_pago");
+            String fechaStr = "-";
+            if (fechaObj instanceof LocalDate) fechaStr = fmt.format((LocalDate) fechaObj);
+            else if (fechaObj != null) fechaStr = fechaObj.toString();
+
+            // Monto formateado
+            Object montoObj = p.get("monto_pagado");
+            String montoStr = "0.00";
+            if (montoObj instanceof Number) {
+                montoStr = String.format("%.2f", ((Number) montoObj).doubleValue());
+            } else if (montoObj != null) {
+                try { montoStr = String.format("%.2f", Double.parseDouble(montoObj.toString())); } catch (Exception ignored) {}
+            }
+
+            modelo.addRow(new Object[]{
+                    p.getOrDefault("id_pago", "-"),
+                    fechaStr,
+                    p.getOrDefault("cliente_nombre", "-"),
+                    p.getOrDefault("id_credito", "-"),
+                    p.getOrDefault("nro_cuota", "-"),
+                    montoStr,
+                    p.getOrDefault("metodo_pago", "-"),
+                    p.getOrDefault("observaciones", "")
+            });
+        }
+    }
+
+    // Carga los datos desde el DAO y delega a setPagos
+    private void cargar() {
         try {
             List<Map<String,Object>> pagos = PagoDAO.listarTodosOrdenadosDesc();
-            if (pagos == null || pagos.isEmpty()) return;
-
-            for (Map<String,Object> p : pagos) {
-                Object fechaObj = p.get("fecha_pago");
-                String fechaStr;
-                if (fechaObj instanceof LocalDate) fechaStr = fmt.format((LocalDate) fechaObj);
-                else fechaStr = fechaObj != null ? fechaObj.toString() : "-";
-
-                Object idPago = p.get("id_pago");
-                Object clienteNombre = p.get("cliente_nombre");
-                Object idCredito = p.get("id_credito");
-                Object nroCuota = p.get("nro_cuota");
-                Object monto = p.get("monto_pagado");
-                Object metodo = p.get("metodo_pago");
-                Object obs = p.get("observaciones");
-
-                String montoStr = "0.00";
-                if (monto instanceof Number) {
-                    montoStr = String.format("%.2f", ((Number) monto).doubleValue());
-                } else if (monto != null) {
-                    try { montoStr = String.format("%.2f", Double.parseDouble(monto.toString())); } catch (Exception ignored) {}
-                }
-
-                modelo.addRow(new Object[]{
-                        idPago != null ? idPago : "-",
-                        fechaStr,
-                        clienteNombre != null ? clienteNombre : "-",
-                        idCredito != null ? idCredito : "-",
-                        nroCuota != null ? nroCuota : "-",
-                        montoStr,
-                        metodo != null ? metodo : "-",
-                        obs != null ? obs : ""
-                });
-            }
+            setPagos(pagos);
         } catch (Exception ex) {
+            modelo.setRowCount(0);
             JOptionPane.showMessageDialog(this,
                     "Error al cargar pagos: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     // Método para imprimir la tabla
      private void imprimirTabla() {
@@ -121,5 +125,8 @@ public class ListarTodosPagosPanel extends JPanel {
     }   
 
 
-
+    // Método para cerrar el panel y volver a la ventana principal
+    private void cerrar() {
+         if (onClose != null) onClose.run();
+    }
 }

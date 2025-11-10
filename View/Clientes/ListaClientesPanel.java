@@ -16,9 +16,12 @@ public class ListaClientesPanel extends JPanel {
     private JTable tabla;
     private DefaultTableModel modelo;
     private JButton imprimirBtn;
+    private JButton cerrarBtn;
+    private Runnable onClose;
     
     // Constructor
-    public ListaClientesPanel() {
+    public ListaClientesPanel( Runnable onClose ) {
+        this.onClose = onClose;
         setLayout(new BorderLayout());
         // Columnas
         String[] columnas = {"ID", "Nombre", "Documento", "Dirección", "Teléfono", "Email"};
@@ -34,6 +37,9 @@ public class ListaClientesPanel extends JPanel {
         imprimirBtn = new JButton("Imprimir");
         imprimirBtn.addActionListener(e -> imprimirTabla());
         bottom.add(imprimirBtn);
+        cerrarBtn = new JButton("Cerrar");
+        cerrarBtn.addActionListener(e -> cerrar());
+        bottom.add(cerrarBtn);
         add(bottom, BorderLayout.SOUTH);
 
     }
@@ -58,5 +64,9 @@ public class ListaClientesPanel extends JPanel {
         }
     }
 
+    // Método para cerrar el panel y volver a la ventana principal
+    private void cerrar() {
+        if (onClose != null) onClose.run();
+    }   
     
 }

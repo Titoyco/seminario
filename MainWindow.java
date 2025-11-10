@@ -58,133 +58,136 @@ public class MainWindow extends JFrame {
     }
 
     // Método para mostrar los menús principales
-    private void mostrarMenus() {
-        JMenuBar menuBar = new JMenuBar();
-        // ---- Menú Clientes ----
-        JMenu clientesMenu = new JMenu("Clientes");
-        // Submenu Clientes.AltaClientePanel
-        JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente");
-        altaClienteItem.addActionListener(e -> mostrarAltaCliente());
-        clientesMenu.add(altaClienteItem);
-        // Submenu Clientes.ModificarClientePanel
-        JMenuItem modificarClienteItem = new JMenuItem("Modificar Cliente");
-        modificarClienteItem.addActionListener(e -> mostrarModificarClientePanel());
-        clientesMenu.add(modificarClienteItem);
-        // Submenu Clientes.BuscarClientesPanel
-        JMenuItem buscarClienteItem = new JMenuItem("Buscar Cliente");
-        buscarClienteItem.addActionListener(e -> mostrarBuscarClientesPanel());
-        clientesMenu.add(buscarClienteItem);
-        // Submenu Clientes.BajaClientePanel
-        JMenuItem bajaClienteItem = new JMenuItem("Baja de Cliente");
-        bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel());
-        clientesMenu.add(bajaClienteItem);
-        // Submenu Clientes.ListaClientesPanel
-        JMenuItem listarClientesItem = new JMenuItem("Listar Clientes");
-        listarClientesItem.addActionListener(e -> mostrarListaClientes());
-        clientesMenu.add(listarClientesItem);
-        // Agregar menú Clientes al menú principal
-        menuBar.add(clientesMenu);
+private void mostrarMenus() {
+    JMenuBar menuBar = new JMenuBar();
 
-        // ---- Menú Créditos  ----
-        JMenu creditosMenu = new JMenu("Créditos");
-        // Submenu Créditos.AltaCreditoPanel
-        JMenuItem altaCreditoItem = new JMenuItem("Alta de Crédito");
-        altaCreditoItem.addActionListener(e -> mostrarAltaCredito());
-        creditosMenu.add(altaCreditoItem);
-        // Submenu Créditos.ListarCreditosClientePanel
-        JMenuItem listarCreditosClienteItem = new JMenuItem("Créditos por Cliente");
-        listarCreditosClienteItem.addActionListener(e -> mostrarListarCreditosCliente());
-        creditosMenu.add(listarCreditosClienteItem);
-        // Submenu Créditos.ListarTodosCreditosPanel
-        JMenuItem listarTodosCreditosItem = new JMenuItem("Listar Todos los Créditos");
-        listarTodosCreditosItem.addActionListener(e -> mostrarListarTodosCreditos());
-        creditosMenu.add(listarTodosCreditosItem);
-        // Agregar menú Créditos al menú principal
-        menuBar.add(creditosMenu);
+    // helper para aplicar estilo tipo "botón" a cualquier componente de menú (JButton, JMenu, etc.)
+    java.util.function.Consumer<javax.swing.JComponent> styleMenuComponent = comp -> {
+        comp.setFocusable(false);
+        comp.setForeground(new Color(56, 81, 145));
+    };
 
-        // ---- Menú Pagos ----
-        JMenu pagosMenu = new JMenu("Pagos");
-        // Submenu Pagos.PagarCuotaPanel
-        JMenuItem pagarCuotaItem = new JMenuItem("Pagar Cuota");
-        pagarCuotaItem.addActionListener(e -> mostrarPagarCuota());
-        pagosMenu.add(pagarCuotaItem);
-        // Submenu Pagos.ListarPagosClientePanel
-        JMenuItem listarPagosItem = new JMenuItem("Listar Pagos por Cliente");
-        listarPagosItem.addActionListener(e -> mostrarListarPagosCliente());
-        pagosMenu.add(listarPagosItem);
-        // Submenu Pagos.AnularPagoPanel
-        JMenuItem anularPagoItem = new JMenuItem("Anular Pago");
-        anularPagoItem.addActionListener(e -> mostrarAnularPago());
-        pagosMenu.add(anularPagoItem);
-        // Submenu Pagos.ListarTodosPagosPanel
-        JMenuItem listarTodosPagosItem = new JMenuItem("Listar Todos los Pagos");
-        listarTodosPagosItem.addActionListener(e -> { mostrarListarTodosPagos(); });
-        pagosMenu.add(listarTodosPagosItem);
-        // Agregar menú Pagos al menú principal
-        menuBar.add(pagosMenu);
+    // ----- inicio (botón) -----
+    JButton inicioBtn = new JButton("Inicio");
+    styleMenuComponent.accept(inicioBtn);
+    inicioBtn.addActionListener(e -> mostrarMenus()); // vuelve a la pantalla principal
+    menuBar.add(inicioBtn);
+    menuBar.add(Box.createHorizontalStrut(8)); // separador visual
 
-        // ---- Menú Deudas ----
-        JMenu deudasMenu = new JMenu("Deudas");
-        // Submenu Deudas.DeudaClientePanel
-        JMenuItem deudaClienteItem = new JMenuItem("Deuda por Cliente");
-        deudaClienteItem.addActionListener(e -> mostrarDeudaClientePanel());
-        deudasMenu.add(deudaClienteItem);
-        JMenuItem listarDeudasItem = new JMenuItem("Listar Deudas por Cliente");
-        listarDeudasItem.addActionListener(e -> mostrarListarDeudas());
-        deudasMenu.add(listarDeudasItem);
-        menuBar.add(deudasMenu);
+    // ---- Menú Clientes ----
+    JMenu clientesMenu = new JMenu("Clientes");
+    styleMenuComponent.accept(clientesMenu);
+    // Submenu Clientes.AltaClientePanel
+    JMenuItem altaClienteItem = new JMenuItem("Alta de Cliente");
+    altaClienteItem.addActionListener(e -> mostrarAltaCliente());
+    clientesMenu.add(altaClienteItem);
+    // Submenu Clientes.ModificarClientePanel
+    JMenuItem modificarClienteItem = new JMenuItem("Modificar Cliente");
+    modificarClienteItem.addActionListener(e -> mostrarModificarClientePanel());
+    clientesMenu.add(modificarClienteItem);
+    // Submenu Clientes.BuscarClientesPanel
+    JMenuItem buscarClienteItem = new JMenuItem("Buscar Cliente");
+    buscarClienteItem.addActionListener(e -> mostrarBuscarClientesPanel());
+    clientesMenu.add(buscarClienteItem);
+    // Submenu Clientes.BajaClientePanel
+    JMenuItem bajaClienteItem = new JMenuItem("Baja de Cliente");
+    bajaClienteItem.addActionListener(e -> mostrarBajaClientePanel());
+    clientesMenu.add(bajaClienteItem);
+    // Submenu Clientes.ListaClientesPanel
+    JMenuItem listarClientesItem = new JMenuItem("Listar Clientes");
+    listarClientesItem.addActionListener(e -> mostrarListaClientes());
+    clientesMenu.add(listarClientesItem);
+    menuBar.add(clientesMenu);
 
-        // ---- Menú Lote ----
-        JMenu loteMenu = new JMenu("Lote");
-        // Submenu Lote.LoteActualPanel
-        JMenuItem loteActualItem = new JMenuItem("Lote Actual");
-        loteActualItem.addActionListener(e -> mostrarLotePanel());
-        loteMenu.add(loteActualItem);
-        // Agregar menú Lote al menú principal
-        menuBar.add(loteMenu);
+    // ---- Menú Créditos  ----
+    JMenu creditosMenu = new JMenu("Créditos");
+    styleMenuComponent.accept(creditosMenu);
+    JMenuItem altaCreditoItem = new JMenuItem("Alta de Crédito");
+    altaCreditoItem.addActionListener(e -> mostrarAltaCredito());
+    creditosMenu.add(altaCreditoItem);
+    JMenuItem listarCreditosClienteItem = new JMenuItem("Créditos por Cliente");
+    listarCreditosClienteItem.addActionListener(e -> mostrarListarCreditosCliente());
+    creditosMenu.add(listarCreditosClienteItem);
+    JMenuItem listarTodosCreditosItem = new JMenuItem("Listar Todos los Créditos");
+    listarTodosCreditosItem.addActionListener(e -> mostrarListarTodosCreditos());
+    creditosMenu.add(listarTodosCreditosItem);
+    menuBar.add(creditosMenu);
 
-        // ---- Menú Sistema ----
-        JMenu sistemaMenu = new JMenu("Sistema");
-        // Submenu Sistema.CambioContraPanel
-        JMenuItem cambioContraItem = new JMenuItem("Cambio de contraseña");
-        cambioContraItem.addActionListener(e -> mostrarCambioContraPanel());
-        sistemaMenu.add(cambioContraItem);
-        // Submenu Sistema.CerrarSesión
-        JMenuItem cerrarSesionItem = new JMenuItem("Cerrar sesión");
-        cerrarSesionItem.addActionListener(e -> {
-            setJMenuBar(null);
-            mostrarLogin();
-        });
-        sistemaMenu.add(cerrarSesionItem);
-        // Agregar menú Sistema al menú principal
-        menuBar.add(sistemaMenu);
+    // ---- Menú Pagos ----
+    JMenu pagosMenu = new JMenu("Pagos");
+    styleMenuComponent.accept(pagosMenu);
+    JMenuItem pagarCuotaItem = new JMenuItem("Pagar Cuota");
+    pagarCuotaItem.addActionListener(e -> mostrarPagarCuota());
+    pagosMenu.add(pagarCuotaItem);
+    JMenuItem listarPagosItem = new JMenuItem("Listar Pagos por Cliente");
+    listarPagosItem.addActionListener(e -> mostrarListarPagosCliente());
+    pagosMenu.add(listarPagosItem);
+    JMenuItem anularPagoItem = new JMenuItem("Anular Pago");
+    anularPagoItem.addActionListener(e -> mostrarAnularPago());
+    pagosMenu.add(anularPagoItem);
+    JMenuItem listarTodosPagosItem = new JMenuItem("Listar Todos los Pagos");
+    listarTodosPagosItem.addActionListener(e -> mostrarListarTodosPagos());
+    pagosMenu.add(listarTodosPagosItem);
+    menuBar.add(pagosMenu);
 
-        setJMenuBar(menuBar); // Establecer la barra de menús en la ventana principal
+    // ---- Menú Deudas ----
+    JMenu deudasMenu = new JMenu("Deudas");
+    styleMenuComponent.accept(deudasMenu);
+    JMenuItem deudaClienteItem = new JMenuItem("Deuda por Cliente");
+    deudaClienteItem.addActionListener(e -> mostrarDeudaClientePanel());
+    deudasMenu.add(deudaClienteItem);
+    JMenuItem listarDeudasItem = new JMenuItem("Listar Todas las Deudas");
+    listarDeudasItem.addActionListener(e -> mostrarListarDeudas());
+    deudasMenu.add(listarDeudasItem);
+    menuBar.add(deudasMenu);
 
-        // Mostrar panel de bienvenida
-        mainPanel.removeAll(); // Limpiar el panel principal
-        JPanel bienvenidaPanel = new JPanel(new BorderLayout());
-        bienvenidaPanel.setBackground(new Color(245, 249, 255));
+    // ---- Menú Lote ----
+    JMenu loteMenu = new JMenu("Lote");
+    styleMenuComponent.accept(loteMenu);
+    JMenuItem loteActualItem = new JMenuItem("Lote Actual");
+    loteActualItem.addActionListener(e -> mostrarLotePanel());
+    loteMenu.add(loteActualItem);
+    menuBar.add(loteMenu);
 
-        // Logo (centrado)
-        JLabel logo = new JLabel(new ImageIcon("img/logo.png"));
-        logo.setHorizontalAlignment(JLabel.CENTER);
+    // ---- Menú Sistema ----
+    JMenu sistemaMenu = new JMenu("Sistema");
+    styleMenuComponent.accept(sistemaMenu);
+    JMenuItem cambioContraItem = new JMenuItem("Cambio de contraseña");
+    cambioContraItem.addActionListener(e -> mostrarCambioContraPanel());
+    sistemaMenu.add(cambioContraItem);
+    JMenuItem cerrarSesionItem = new JMenuItem("Cerrar sesión");
+    cerrarSesionItem.addActionListener(e -> {
+        setJMenuBar(null);
+        mostrarLogin();
+    });
+    sistemaMenu.add(cerrarSesionItem);
+    menuBar.add(sistemaMenu);
 
-        // Texto de bienvenida (más arriba)
-        JLabel bienvenida = new JLabel("Bienvenido al sistema", JLabel.CENTER);
-        bienvenida.setFont(new Font("Segoe UI", Font.BOLD, 44));
-        bienvenida.setForeground(new Color(56, 81, 145));
-        bienvenida.setBorder(BorderFactory.createEmptyBorder(100, 20, 10, 20));
+    setJMenuBar(menuBar); // Establecer la barra de menús en la ventana principal
 
-        // Añadir la etiqueta en la parte superior y el logo en el centro
-        bienvenidaPanel.add(bienvenida, BorderLayout.NORTH);
-        bienvenidaPanel.add(logo, BorderLayout.CENTER);
+    // Mostrar panel de bienvenida
+    mainPanel.removeAll(); // Limpiar el panel principal
+    JPanel bienvenidaPanel = new JPanel(new BorderLayout());
+    bienvenidaPanel.setBackground(new Color(245, 249, 255));
 
-        mainPanel.add(bienvenidaPanel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
-    }
+    // Logo (centrado)
+    JLabel logo = new JLabel(new ImageIcon("img/logo.png"));
+    logo.setHorizontalAlignment(JLabel.CENTER);
 
+    // Texto de bienvenida (más arriba)
+    JLabel bienvenida = new JLabel("Bienvenido al sistema", JLabel.CENTER);
+    bienvenida.setFont(new Font("Segoe UI", Font.BOLD, 44));
+    bienvenida.setForeground(new Color(56, 81, 145));
+    bienvenida.setBorder(BorderFactory.createEmptyBorder(100, 20, 10, 20));
+
+    // Añadir la etiqueta en la parte superior y el logo en el centro
+    bienvenidaPanel.add(bienvenida, BorderLayout.NORTH);
+    bienvenidaPanel.add(logo, BorderLayout.CENTER);
+
+    mainPanel.add(bienvenidaPanel, BorderLayout.CENTER);
+    mainPanel.revalidate();
+    mainPanel.repaint();
+}
     // Mostrar ListarPagosClientePanel
     private void mostrarListarPagosCliente() {
         mainPanel.removeAll();
@@ -196,7 +199,7 @@ public class MainWindow extends JFrame {
     // Mostrar ListarDeudasPanel
     private void mostrarListarDeudas() {
         mainPanel.removeAll();
-        View.Deudas.ListarDeudasPanel panel = new View.Deudas.ListarDeudasPanel();
+        View.Deudas.ListarDeudasPanel panel = new View.Deudas.ListarDeudasPanel( () -> mostrarMenus() );
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }
@@ -204,7 +207,7 @@ public class MainWindow extends JFrame {
     // Mostrar ListarTodosPagosPanel
     private void mostrarListarTodosPagos() {
         mainPanel.removeAll();
-        View.Pagos.ListarTodosPagosPanel panel = new View.Pagos.ListarTodosPagosPanel();
+        View.Pagos.ListarTodosPagosPanel panel = new View.Pagos.ListarTodosPagosPanel( () -> mostrarMenus() );
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }
@@ -395,7 +398,7 @@ private void mostrarBuscarClientesPanel() {
     // Mostrar ListaClientesPanel
     private void mostrarListaClientes() {
         mainPanel.removeAll();
-        ListaClientesPanel panel = new ListaClientesPanel();
+        ListaClientesPanel panel = new ListaClientesPanel( () -> mostrarMenus() );
         List<Cliente> clientes = ClienteController.listarClientes();
         panel.setClientes(clientes);
         mainPanel.add(panel, BorderLayout.CENTER);
@@ -433,7 +436,7 @@ private void mostrarBuscarClientesPanel() {
     // Mostrar ListarTodosCreditosPanel
     private void mostrarListarTodosCreditos() {
         mainPanel.removeAll();
-        View.Creditos.ListarTodosCreditosPanel panel = new View.Creditos.ListarTodosCreditosPanel();
+        View.Creditos.ListarTodosCreditosPanel panel = new View.Creditos.ListarTodosCreditosPanel( () -> mostrarMenus() );
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }   

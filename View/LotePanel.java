@@ -51,6 +51,12 @@ public class LotePanel extends JPanel {
         refrescarBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         gbc.gridx=0; gbc.gridy=5; gbc.gridwidth=2;
         add(refrescarBtn, gbc);
+        // Espacio extra para estética
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        add(Box.createVerticalGlue(), gbc);
         // Eventos
         cerrarBtn.addActionListener(e -> cerrarLote());
         refrescarBtn.addActionListener(e -> cargarDatos());
