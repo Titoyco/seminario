@@ -116,6 +116,10 @@ public class MainWindow extends JFrame {
         JMenuItem anularPagoItem = new JMenuItem("Anular Pago");
         anularPagoItem.addActionListener(e -> mostrarAnularPago());
         pagosMenu.add(anularPagoItem);
+        // Submenu Pagos.ListarTodosPagosPanel
+        JMenuItem listarTodosPagosItem = new JMenuItem("Listar Todos los Pagos");
+        listarTodosPagosItem.addActionListener(e -> { mostrarListarTodosPagos(); });
+        pagosMenu.add(listarTodosPagosItem);
         // Agregar menú Pagos al menú principal
         menuBar.add(pagosMenu);
 
@@ -189,10 +193,18 @@ public class MainWindow extends JFrame {
         refrescar();
     }
 
-    // Mostrar listado de deudas por cliente
+    // Mostrar ListarDeudasPanel
     private void mostrarListarDeudas() {
         mainPanel.removeAll();
         View.Deudas.ListarDeudasPanel panel = new View.Deudas.ListarDeudasPanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+
+    // Mostrar ListarTodosPagosPanel
+    private void mostrarListarTodosPagos() {
+        mainPanel.removeAll();
+        View.Pagos.ListarTodosPagosPanel panel = new View.Pagos.ListarTodosPagosPanel();
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }

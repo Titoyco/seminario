@@ -64,7 +64,7 @@ public class PagoDAO {
                      "JOIN cuotas cu ON cu.id = p.id_cuota " +
                      "JOIN creditos cr ON cr.id = cu.id_credito " +
                      "WHERE cr.id_cliente = ? " +
-                     "ORDER BY p.fecha_pago DESC, p.id DESC";
+                     "ORDER BY p.id DESC";
         // Ejecutar consulta
         try (Connection conn = ConexionMySQL.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -150,5 +150,39 @@ public class PagoDAO {
             }
         }
         return false;
+    }
+
+    public static List<Map<String,Object>> listarTodosOrdenadosDesc() {
+        List<Map<String,Object>> lista = new ArrayList<>();
+        String sql =
+            "SELECT p.id AS id_pago, p.id_cuota, p.fecha_pago, p.monto_pagado, p.metodo_pago, p.observaciones, " +
+            "       cu.numero AS nro_cuota, cr.id AS id_credito, cl.id AS cliente_id, cl.nombre AS cliente_nombre " +
+            "FROM pagos p " +
+            "JOIN cuotas cu ON cu.id = p.id_cuota " +
+            "JOIN creditos cr ON cr.id = cu.id_credito " +
+            "JOIN clientes cl ON cl.id = cr.id_cliente " +
+            "ORDER BY p.id DESC";
+        try (Connection conn = ConexionMySQL.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String,Object> row = new HashMap<>();
+                row.put("id_pago", rs.getInt("id_pago"));
+                row.put("id_cuota", rs.getInt("id_cuota"));
+                Date d = rs.getDate("fecha_pago");
+                row.put("fecha_pago", d != null ? d.toLocalDate() : null);
+                row.put("monto_pagado", rs.getDouble("monto_pagado"));
+                row.put("metodo_pago", rs.getString("metodo_pago"));
+                row.put("observaciones", rs.getString("observaciones"));
+                row.put("nro_cuota", rs.getInt("nro_cuota"));
+                row.put("id_credito", rs.getInt("id_credito"));
+                row.put("cliente_id", rs.getInt("cliente_id"));
+                row.put("cliente_nombre", rs.getString("cliente_nombre"));
+                lista.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error listarTodosOrdenadosDesc: " + e.getMessage());
+        }
+        return lista;
     }
 }
