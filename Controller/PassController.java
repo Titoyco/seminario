@@ -1,9 +1,9 @@
 // Controlador para la lógica de cambio de contraseña
 
 package Controller;
-import View.CambioPassPanel;
 import javax.swing.*;
 import Dao.VariablesDAO;
+import View.Sistema.CambioPassPanel;
 
 public class PassController {
     

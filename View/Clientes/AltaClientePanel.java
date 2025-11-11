@@ -27,70 +27,77 @@ public class AltaClientePanel extends JPanel {
         gbc.insets = new Insets(12, 18, 12, 18); // Espaciado entre componentes
         gbc.fill = GridBagConstraints.HORIZONTAL; // Los campos ocupan el ancho disponible
 
-        // Título del panel
+          // Título del panel
         JLabel titleLabel = new JLabel("Alta de Cliente");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titleLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(titleLabel, gbc);
 
+        // Línea explicativa debajo del título
+        JLabel subtitle = new JLabel("(Ingrese los datos del cliente y presione GUARDAR)");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(Color.DARK_GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        add(subtitle, gbc);
+
         //--------- Nombre ---------
         JLabel nombreLabel = new JLabel("Nombre:");
         nombreLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Fuente moderna y negrita
         nombreLabel.setForeground(new Color(56, 81, 145)); // Azul suave
-        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
         add(nombreLabel, gbc);
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         nombreField.setBackground(Color.WHITE); // Fondo claro
         nombreField.setPreferredSize(new Dimension(300, 30)); // Establece ancho mínimo de 300px y alto de 30px
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1; gbc.gridy = 2;
         add(nombreField, gbc);
 
         //--------- Documento ---------
         JLabel docLabel = new JLabel("Documento:");
         docLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         docLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         add(docLabel, gbc);
         docField = new JTextField();
         docField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         docField.setBackground(Color.WHITE);
         docField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1; gbc.gridy = 3;
         add(docField, gbc);
 
         //--------- Dirección ---------
         JLabel dirLabel = new JLabel("Dirección:");
         dirLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         dirLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 4;
         add(dirLabel, gbc);
         dirField = new JTextField();
         dirField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         dirField.setBackground(Color.WHITE);
         dirField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1; gbc.gridy = 4;
         add(dirField, gbc);
 
         //--------- Teléfono ---------
         JLabel telLabel = new JLabel("Teléfono:");
         telLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         telLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         add(telLabel, gbc);
         telField = new JTextField();
         telField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         telField.setBackground(Color.WHITE);
         telField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
-        gbc.gridx = 1; gbc.gridy = 4;
+        gbc.gridx = 1; gbc.gridy = 5;
         add(telField, gbc);
 
         //--------- Email ---------
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         emailLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 6;
         add(emailLabel, gbc);
         emailField = new JTextField();
         emailField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -98,7 +105,7 @@ public class AltaClientePanel extends JPanel {
         emailField.setBackground(Color.WHITE);
         emailField.setBorder(BorderFactory.createLineBorder(new Color(56, 81, 145)));
         emailField.setPreferredSize(new Dimension(300, 30)); // Ancho mínimo de 300px
-        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.gridx = 1; gbc.gridy = 6;
         add(emailField, gbc);
 
         //--------- Botón Guardar ---------
@@ -107,12 +114,12 @@ public class AltaClientePanel extends JPanel {
         guardarBtn.setBackground(new Color(56, 81, 145));
         guardarBtn.setForeground(Color.WHITE);
         guardarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
         add(guardarBtn, gbc);
 
 
         // Espacio extra al final para estética y empujar los campos hacia arriba
-        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 2;
         gbc.weighty = 1.0; // Empuja los campos hacia arriba si el panel crece
         add(Box.createVerticalGlue(), gbc);
     }

@@ -33,23 +33,30 @@ public class ModificarClientePanel extends JPanel {
         gbc.insets = new Insets(12, 18, 12, 18);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
+         // Título
         JLabel titleLabel = new JLabel("Modificar Cliente");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titleLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(titleLabel, gbc);
 
+        // Línea explicativa debajo del título
+        JLabel subtitle = new JLabel("Seleccione el cliente que quiere modificar, cambie los datos y presione GUARDAR CAMBIOS");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(Color.DARK_GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        add(subtitle, gbc);
+
         // Combo para seleccionar cliente
         JLabel clienteLabel = new JLabel("Seleccionar Cliente:");
         clienteLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         clienteLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
         add(clienteLabel, gbc);
         clientesCombo = new JComboBox<>();
         cargarClientes(); // Llena el combo
         clientesCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1; gbc.gridy = 2;
         add(clientesCombo, gbc);
 
         // Selecciona el cliente correspondiente
@@ -68,59 +75,59 @@ public class ModificarClientePanel extends JPanel {
         JLabel nombreLabel = new JLabel("Nombre:");
         nombreLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         nombreLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         add(nombreLabel, gbc);
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         nombreField.setBackground(Color.WHITE);
         nombreField.setPreferredSize(new Dimension(300, 30));
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1; gbc.gridy = 3;
         add(nombreField, gbc);
 
         // Documento
         JLabel docLabel = new JLabel("Documento:");
         docLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         docLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 4;
         add(docLabel, gbc);
         docField = new JTextField();
         docField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         docField.setBackground(Color.WHITE);
         docField.setPreferredSize(new Dimension(300, 30));
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1; gbc.gridy = 4;
         add(docField, gbc);
 
         // Dirección
         JLabel dirLabel = new JLabel("Dirección:");
         dirLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         dirLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         add(dirLabel, gbc);
         dirField = new JTextField();
         dirField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         dirField.setBackground(Color.WHITE);
         dirField.setPreferredSize(new Dimension(300, 30));
-        gbc.gridx = 1; gbc.gridy = 4;
+        gbc.gridx = 1; gbc.gridy = 5;
         add(dirField, gbc);
 
         // Teléfono
         JLabel telLabel = new JLabel("Teléfono:");
         telLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         telLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 6;
         add(telLabel, gbc);
         telField = new JTextField();
         telField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         telField.setBackground(Color.WHITE);
         telField.setPreferredSize(new Dimension(300, 30));
-        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.gridx = 1; gbc.gridy = 6;
         add(telField, gbc);
 
         // Email
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         emailLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 6;
+        gbc.gridx = 0; gbc.gridy = 7;
         add(emailLabel, gbc);
         emailField = new JTextField();
         emailField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -128,7 +135,7 @@ public class ModificarClientePanel extends JPanel {
         emailField.setBackground(Color.WHITE);
         emailField.setBorder(BorderFactory.createLineBorder(new Color(56, 81, 145)));
         emailField.setPreferredSize(new Dimension(300, 30));
-        gbc.gridx = 1; gbc.gridy = 6;
+        gbc.gridx = 1; gbc.gridy = 7;
         add(emailField, gbc);
 
         // Botón Guardar
@@ -137,11 +144,11 @@ public class ModificarClientePanel extends JPanel {
         guardarBtn.setBackground(new Color(56, 81, 145));
         guardarBtn.setForeground(Color.WHITE);
         guardarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 2;
         add(guardarBtn, gbc);
 
         // Espaciador estético
-        gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
         gbc.weighty = 1.0;
         add(Box.createVerticalGlue(), gbc);
 

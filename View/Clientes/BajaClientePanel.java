@@ -30,31 +30,38 @@ public class BajaClientePanel extends JPanel {
         gbc.insets = new Insets(12, 18, 12, 18);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
+         // Título
         JLabel titulo = new JLabel("Baja de Cliente");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titulo.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(titulo, gbc);
 
+        // Línea explicativa debajo del título
+        JLabel subtitle = new JLabel("(Seleccione el cliente que quiera dar de baja y presione ELIMINAR)");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(Color.DARK_GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        add(subtitle, gbc);
+
         //----- ComboBox para seleccionar cliente -----
         gbc.gridwidth = 1;
         JLabel comboLabel = new JLabel("Seleccionar Cliente:");
         comboLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         comboLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 2;
         add(comboLabel, gbc);
         clientesCombo = new JComboBox<>();
         cargarClientes(); // Carga la lista de clientes en el combo
         clientesCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1; gbc.gridy = 2;
         add(clientesCombo, gbc);
 
         //----- Campo de ID de Cliente -----
         JLabel idLabel = new JLabel("ID de Cliente:");
         idLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         idLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         add(idLabel, gbc);
         idField = new JTextField();
         idField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -62,7 +69,7 @@ public class BajaClientePanel extends JPanel {
         idField.setBackground(Color.WHITE);
         idField.setPreferredSize(new Dimension(300, 30));
         idField.setEditable(false);
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1; gbc.gridy = 3;
         add(idField, gbc);
 
         // Sincroniza el campo de ID cuando se selecciona un cliente del combo
@@ -94,11 +101,11 @@ public class BajaClientePanel extends JPanel {
         eliminarBtn.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
         eliminarBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         eliminarBtn.setToolTipText("Eliminar cliente seleccionado");
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         add(eliminarBtn, gbc);
 
         // Espacio extra al final para estética y empujar los campos hacia arriba
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         gbc.weighty = 1.0;
         add(Box.createVerticalGlue(), gbc);
     }

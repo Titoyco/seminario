@@ -1,7 +1,7 @@
 // CambioPassPanel.java
 // Panel de cambio de contraseña con formato moderno y comentarios explicativos
 
-package View;
+package View.Sistema;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;

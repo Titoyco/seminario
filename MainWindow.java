@@ -5,23 +5,16 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
 import Controller.*;
 import Model.*;
 import View.*;
-import View.Clientes.AltaClientePanel;
-import View.Clientes.BajaClientePanel;
-import View.Clientes.BuscarClientesPanel;
-import View.Clientes.ListaClientesPanel;
-import View.Clientes.ModificarClientePanel;
-import View.Creditos.AltaCreditoPanel;
-import View.Creditos.ListarCreditosClientePanel;
-import View.Deudas.DeudaClientePanel;
-import View.Pagos.AnularPagoPanel;
-import View.Pagos.ListarPagosClientePanel;
-import View.Pagos.PagarCuotaPanel;
-import View.Creditos.AnularCreditoPanel;
-import View.Lotes.ListarLotesPanel;
+import View.Clientes.*;
+import View.Deudas.*;
+import View.Pagos.*;
+import View.Creditos.*;
+import View.Lotes.*;
+import View.Sistema.*;
+
 
 
 
@@ -166,12 +159,23 @@ private void mostrarMenus() {
     JMenuItem cambioContraItem = new JMenuItem("Cambio de contraseña");
     cambioContraItem.addActionListener(e -> mostrarCambioContraPanel());
     sistemaMenu.add(cambioContraItem);
+
+    JMenuItem backupBDItem = new JMenuItem("Backup de Base de Datos");
+    backupBDItem.addActionListener(e -> mostrarBackupPanel());
+    sistemaMenu.add(backupBDItem);
+    
+    JMenuItem restaurarBDItem = new JMenuItem("Restaurar Base de Datos");
+    restaurarBDItem.addActionListener(e -> mostrarRestaurarPanel());
+    sistemaMenu.add(restaurarBDItem);
+
     JMenuItem cerrarSesionItem = new JMenuItem("Cerrar sesión");
     cerrarSesionItem.addActionListener(e -> {
         setJMenuBar(null);
         mostrarLogin();
     });
     sistemaMenu.add(cerrarSesionItem);
+
+
     menuBar.add(sistemaMenu);
 
     setJMenuBar(menuBar); // Establecer la barra de menús en la ventana principal
@@ -199,6 +203,22 @@ private void mostrarMenus() {
     mainPanel.revalidate();
     mainPanel.repaint();
 
+    }
+
+    // Mostrar panel de backup de base de datos
+    private void mostrarBackupPanel() {
+        mainPanel.removeAll();
+        BackUpPanel panel = new BackUpPanel( () -> mostrarMenus() );
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+
+    // Mostrar panel de restaurar base de datos
+    private void mostrarRestaurarPanel() {
+        mainPanel.removeAll();
+        RestaurarPanel panel = new RestaurarPanel( () -> mostrarMenus() );
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
     }
 
     // Método para listar los lotes

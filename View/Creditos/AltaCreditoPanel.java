@@ -43,26 +43,35 @@ public class AltaCreditoPanel extends JPanel {
         gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=2;
         add(title, gbc);
         gbc.gridwidth=1;
+
+        // Línea explicativa debajo del título
+        JLabel subtitle = new JLabel("Seleccione del cliente, ingrese el monto y cantidad de cuotas, y presione CREAR CRÉDITO.");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(Color.DARK_GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        add(subtitle, gbc);
+        gbc.gridwidth = 1;
+
         // Cliente
-        addLabel("Cliente:", gbc, 0,1);
+        addLabel("Cliente:", gbc, 0,2);
         clienteCombo = new JComboBox<>();
         cargarClientes();
-        gbc.gridx=1; gbc.gridy=1;
+        gbc.gridx=1; gbc.gridy=2;
         add(clienteCombo, gbc);
         // Monto
-        addLabel("Importe (capital):", gbc, 0,2);
+        addLabel("Importe (capital):", gbc, 0,3);
         montoField = new JTextField();
-        gbc.gridx=1; gbc.gridy=2; add(montoField, gbc);
+        gbc.gridx=1; gbc.gridy=3; add(montoField, gbc);
         // Cuotas
-        addLabel("Cantidad de cuotas:", gbc, 0,3);
+        addLabel("Cantidad de cuotas:", gbc, 0,4);
         cuotasField = new JTextField();
-        gbc.gridx=1; gbc.gridy=3; add(cuotasField, gbc);
+        gbc.gridx=1; gbc.gridy=4; add(cuotasField, gbc);
         // Interés vigente
-        addLabel("Interés mensual vigente:", gbc, 0,4);
+        addLabel("Interés mensual vigente:", gbc, 0,5);
         interesLabel = new JLabel("-");
         interesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         interesLabel.setForeground(new Color(56,81,145));
-        gbc.gridx=1; gbc.gridy=4;
+        gbc.gridx=1; gbc.gridy=5;
         add(interesLabel, gbc);
         // Botón Crear
         crearBtn = new JButton("Crear Crédito");

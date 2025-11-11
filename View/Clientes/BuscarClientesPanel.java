@@ -33,35 +33,42 @@ public class BuscarClientesPanel extends JPanel {
         gbc.insets = new Insets(10, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
+          // Título
         JLabel titleLabel = new JLabel("Buscar Clientes");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(new Color(56, 81, 145));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(titleLabel, gbc);
 
+        // Línea explicativa debajo del título
+        JLabel subtitle = new JLabel("Escribe el nombre o el DNI del cliente y presiona buscar, luego selecciona un cliente de la lista y presiona el botón de acción que desees");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(Color.DARK_GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        add(subtitle, gbc);
+
         // Campo Nombre
         JLabel nombreLabel = new JLabel("Nombre:");
         nombreLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         nombreLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
         add(nombreLabel, gbc);
         nombreField = new JTextField();
         nombreField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         nombreField.setPreferredSize(new Dimension(200, 28));
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1; gbc.gridy = 2;
         add(nombreField, gbc);
 
         // Campo Documento
         JLabel documentoLabel = new JLabel("Documento:");
         documentoLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         documentoLabel.setForeground(new Color(56, 81, 145));
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         add(documentoLabel, gbc);
         documentoField = new JTextField();
         documentoField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         documentoField.setPreferredSize(new Dimension(200, 28));
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1; gbc.gridy = 3;
         add(documentoField, gbc);
 
         // Botón Buscar
@@ -69,7 +76,7 @@ public class BuscarClientesPanel extends JPanel {
         buscarBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
         buscarBtn.setBackground(new Color(56, 81, 145));
         buscarBtn.setForeground(Color.WHITE);
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         add(buscarBtn, gbc);
 
         // Tabla de resultados
@@ -83,7 +90,7 @@ public class BuscarClientesPanel extends JPanel {
         tablaResultados = new JTable(modeloTabla);
         tablaResultados.setFillsViewportHeight(true);
 
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2; gbc.weightx = 1.0; gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weightx = 1.0; gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         add(new JScrollPane(tablaResultados), gbc);
 
@@ -101,9 +108,8 @@ public class BuscarClientesPanel extends JPanel {
         botonesPanel.add(verPagosBtn);
         botonesPanel.add(verDeudaBtn);
 
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weighty = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2; gbc.weighty = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
         add(botonesPanel, gbc);
-
         // ActionListener para el botón buscar
         buscarBtn.addActionListener(e -> buscarClientes());
         nombreField.addActionListener(e -> buscarClientes());
