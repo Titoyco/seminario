@@ -54,6 +54,7 @@ public class PagoController {
     public static List<Map<String,Object>> listarPagosCliente(int idCliente) {
         return Dao.PagoDAO.listarPagosPorCliente(idCliente);
     }
+    
 
     // Anula un pago:
     //  - Elimina el registro en pagos

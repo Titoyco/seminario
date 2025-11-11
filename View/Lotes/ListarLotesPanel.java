@@ -1,3 +1,6 @@
+// ListarLotesPanel.java
+// Panel para listar lotes.
+
 package View.Lotes;
 
 import Dao.ConexionMySQL;
@@ -15,14 +18,10 @@ import java.util.List;
 import java.text.MessageFormat;
 import java.awt.print.PrinterException;
 
-/**
- * Panel para listar el historial de lotes (nro_lote, fecha_apertura, fecha_cierre).
- *
- * Nota: para no modificar DAOs/Controllers existentes, este panel realiza una
- * consulta directa a la tabla `lotes` usando ConexionMySQL.
- */
+
 public class ListarLotesPanel extends JPanel {
 
+    // Componentes del panel
     private JTable tabla;
     private DefaultTableModel modelo;
     private JButton imprimirBtn;
@@ -31,6 +30,7 @@ public class ListarLotesPanel extends JPanel {
     private final Runnable onClose;
     private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    // Constructor
     public ListarLotesPanel(Runnable onClose) {
         this.onClose = onClose;
         setLayout(new BorderLayout());
@@ -66,9 +66,8 @@ public class ListarLotesPanel extends JPanel {
         // Listeners
         refrescarBtn.addActionListener(e -> cargar());
         imprimirBtn.addActionListener(e -> imprimirTabla());
-        cerrarBtn.addActionListener(e -> {
-            if (onClose != null) onClose.run();
-        });
+        cerrarBtn.addActionListener(e -> { cerrar(); });
+           
 
         // carga inicial
         cargar();
@@ -132,5 +131,9 @@ public class ListarLotesPanel extends JPanel {
             this.fechaC = fechaC;
             this.estado = estado;
         }
+    }
+
+    public void cerrar() {
+        if (onClose != null) onClose.run();
     }
 }

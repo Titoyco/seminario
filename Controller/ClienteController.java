@@ -7,6 +7,7 @@ import Model.Cliente;
 import java.util.List;
 
 import Dao.ClienteDAO;
+import Dao.CreditoDAO;
 
 public class ClienteController {
 
@@ -18,6 +19,12 @@ public class ClienteController {
 
     // Baja cliente (desde BajaClientePanel)
     public static boolean bajaCliente(int idCliente) {
+        if (CreditoDAO.existeCreditoVigentePorCliente(idCliente)) {
+            // No se puede eliminar el cliente si tiene créditos vigentes
+            // muetra mensaje de error
+            System.out.println("Error: No se puede eliminar el cliente con créditos vigentes.");
+            return false;
+        }
         return ClienteDAO.eliminarPorId(idCliente);
     }
 

@@ -35,9 +35,7 @@ public class LoteDAO {
     public static boolean cerrarLoteActualYCrearNuevo(LocalDate fechaCierre, LocalDate fechaAperturaNuevo) {
         String selectVar = "SELECT nro_lote FROM variables LIMIT 1";
         String cerrar = "UPDATE lotes SET fecha_cierre=? WHERE nro_lote=? AND fecha_cierre IS NULL";
-        String mora = "UPDATE cuotas cu JOIN creditos cr ON cr.id = cu.id_credito " +
-                      "SET cu.estado='mora' " +
-                      "WHERE cu.estado='pendiente' AND (cr.lote_origen + cu.numero)=?";
+        String mora = "UPDATE cuotas cu JOIN creditos cr ON cr.id = cu.id_credito " + "SET cu.estado='mora' " + "WHERE cu.estado='pendiente' AND (cr.lote_origen + cu.numero) <= ?";
         String insertNuevo = "INSERT INTO lotes (nro_lote, fecha_apertura) VALUES (?,?)";
         String updateVar = "UPDATE variables SET nro_lote=? WHERE id=1";
         Connection conn = null;

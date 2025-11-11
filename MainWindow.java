@@ -212,7 +212,7 @@ private void mostrarMenus() {
     // Mostrar ListarPagosClientePanel
     private void mostrarListarPagosCliente() {
         mainPanel.removeAll();
-        ListarPagosClientePanel panel = new ListarPagosClientePanel();
+        ListarPagosClientePanel panel = new ListarPagosClientePanel( () -> mostrarMenus() );
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }

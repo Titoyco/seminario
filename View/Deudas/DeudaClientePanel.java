@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.awt.print.*;
 
 public class DeudaClientePanel extends JPanel {
 
@@ -27,11 +28,14 @@ public class DeudaClientePanel extends JPanel {
     private DefaultTableModel modelo;
     private JButton refrescarBtn;
     private JButton cerrarBtn;
+    private JButton imprimirBtn;
     private JComboBox<Cliente> comboClientes;
+    private final Runnable onClose;
 
     // Constructor
     public DeudaClientePanel(final int idCliente, Runnable onClose) {
         this.idCliente = idCliente;
+        this.onClose = onClose;
         setLayout(new BorderLayout());
         setBackground(new Color(245,249,255));
 
@@ -79,16 +83,6 @@ public class DeudaClientePanel extends JPanel {
         lblDeudaActual = etiqueta(header, gbc, 1,2, "Deuda ACTUAL: $0.00");
         lblDeudaMora = etiqueta(header, gbc, 2,2, "En MORA: $0.00");
 
-        refrescarBtn = new JButton("Refrescar");
-        gbc.gridx = 3;
-        gbc.gridy = 2;
-        header.add(refrescarBtn, gbc);
-
-        cerrarBtn = new JButton("Cerrar");
-        gbc.gridx = 4;
-        gbc.gridy = 2;
-        header.add(cerrarBtn, gbc);
-
         add(header, BorderLayout.NORTH);
 
         // Tabla detalle
@@ -100,11 +94,8 @@ public class DeudaClientePanel extends JPanel {
         tabla = new JTable(modelo);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        // Listeners
-        refrescarBtn.addActionListener(e -> cargarDatos());
-        cerrarBtn.addActionListener(e -> {
-            if (onClose != null) onClose.run();
-        });
+
+
 
         comboClientes.addActionListener(e -> {
             Cliente seleccionado = (Cliente) comboClientes.getSelectedItem();
@@ -121,6 +112,23 @@ public class DeudaClientePanel extends JPanel {
                 lblDeudaMora.setText("En MORA: $0.00");
             }
         });
+
+                // Botones inferiores
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.setBackground(new Color(245, 249, 255));
+        refrescarBtn = new JButton("Refrescar");
+        imprimirBtn = new JButton("Imprimir");
+        cerrarBtn = new JButton("Cerrar");
+
+        bottom.add(refrescarBtn);
+        bottom.add(imprimirBtn);
+        bottom.add(cerrarBtn);
+        add(bottom, BorderLayout.SOUTH);
+
+        // Listeners
+        refrescarBtn.addActionListener(e -> Refrescar());
+        imprimirBtn.addActionListener(e -> imprimirPanel());
+        cerrarBtn.addActionListener(e -> { cerrar(); });
 
         // Cargar clientes y datos iniciales
         cargarClientes();
@@ -159,7 +167,7 @@ public class DeudaClientePanel extends JPanel {
     // Cargar clientes en el combobox (versión robusta que evita disparos no deseados)
     private void cargarClientes() {
         try {
-            List<Cliente> clientes = ClienteController.listarClientes();
+            java.util.List<Cliente> clientes = ClienteController.listarClientes();
             // Guardamos y removemos temporalmente los listeners para evitar disparos
             java.awt.event.ActionListener[] listeners = comboClientes.getActionListeners();
             for (java.awt.event.ActionListener l : listeners) {
@@ -254,8 +262,9 @@ public class DeudaClientePanel extends JPanel {
 
         // Detalle
         modelo.setRowCount(0);
-        List<Map<String,Object>> detalle = DeudaDAO.detalleCuotasPendientes(this.idCliente);
+        java.util.List<Map<String,Object>> detalle = DeudaDAO.detalleCuotasPendientes(this.idCliente);
         if (detalle != null) {
+            Integer loteActual = VariablesDAO.getNroLote();
             for (Map<String,Object> m : detalle) {
                 Object esFutura = m.get("es_futura");
                 boolean futura = false;
@@ -272,5 +281,60 @@ public class DeudaClientePanel extends JPanel {
                 });
             }
         }
+    }
+
+    // Imprime todo el panel (cabecera + tabla), escalando al ancho de la página y paginando verticalmente si hace falta.
+    private void imprimirPanel() {
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        pj.setJobName("Deuda por Cliente - " + lblCliente.getText());
+
+        pj.setPrintable(new Printable() {
+            @Override
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                Graphics2D g2 = (Graphics2D) graphics;
+                // Mover origen a área imprimible
+                g2.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+                double pageWidth = pageFormat.getImageableWidth();
+                double pageHeight = pageFormat.getImageableHeight();
+
+                double panelWidth = DeudaClientePanel.this.getWidth();
+                double panelHeight = DeudaClientePanel.this.getHeight();
+
+                if (panelWidth == 0 || panelHeight == 0) return NO_SUCH_PAGE;
+
+                // Escalar para ajustar el ancho de la página
+                double scale = pageWidth / panelWidth;
+
+                double scaledPanelHeight = panelHeight * scale;
+                int totalPages = (int) Math.ceil(scaledPanelHeight / pageHeight);
+
+                if (pageIndex >= totalPages) return NO_SUCH_PAGE;
+
+                // desplazar verticalmente por página y aplicar escala
+                g2.translate(0, -pageIndex * pageHeight);
+                g2.scale(scale, scale);
+
+                // Imprimir el componente (incluye cabecera y tabla)
+                DeudaClientePanel.this.printAll(g2);
+                return PAGE_EXISTS;
+            }
+        });
+
+        boolean doPrint = pj.printDialog();
+        if (doPrint) {
+            try {
+                pj.print();
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(this, "Error al imprimir: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    private void Refrescar() {
+        cargarDatos();
+    }
+
+    private void cerrar() {
+         if (onClose != null) onClose.run();
     }
 }

@@ -37,7 +37,8 @@ public class PagoDAO {
                 }
             }
             // Marcar cuota como pagada
-            CuotaDAO.marcarPagada(idCuota, conn);
+            boolean marcado = CuotaDAO.marcarPagada(idCuota, conn);
+            if (!marcado) throw new SQLException("No se pudo marcar cuota como pagada");
             // Si todo bien, commit
             conn.commit();
             return idPagoGenerado;

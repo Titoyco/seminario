@@ -163,4 +163,18 @@ public class CreditoDAO {
         }
         return list;
     }
+    
+    // Verifica si un cliente tiene créditos vigentes
+    public static boolean existeCreditoVigentePorCliente(int idCliente) {
+        String sql = "SELECT 1 FROM creditos WHERE id_cliente = ? AND estado = 'vigente' LIMIT 1";
+        try (Connection conn = ConexionMySQL.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCliente);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) { /* log */ }
+        return false;
+    }
+
 }

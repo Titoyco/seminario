@@ -66,7 +66,7 @@ public class AnularCreditoPanel extends JPanel {
         refrescarBtn.addActionListener(e -> cargar());
         anularBtn.addActionListener(e -> anularSeleccionado());
         cerrarBtn.addActionListener(e -> {
-            if (onClose != null) onClose.run();
+            cerrar();
         });
 
         // carga inicial
@@ -141,5 +141,9 @@ public class AnularCreditoPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(this, "No se pudo anular el crédito. Revise la consola.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void cerrar() {
+        if (onClose != null) onClose.run();
     }
 }
