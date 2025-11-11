@@ -1,6 +1,6 @@
 // Panel que muestra información del lote actual y permite cerrarlo y crear uno nuevo.
 
-package View;
+package View.Lotes;
 
 import Controller.LoteController;
 import Model.Lote;

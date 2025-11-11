@@ -31,16 +31,19 @@ public class ListaClientesPanel extends JPanel {
         // Añadir componentes
         add(new JLabel("Listado de Clientes", JLabel.CENTER), BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
-        // Panel inferior con botón de refrescar
+
+
+
+        // Botones inferiores
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        bottom.setBackground(new Color(245, 249, 255));
         imprimirBtn = new JButton("Imprimir");
-        imprimirBtn.addActionListener(e -> imprimirTabla());
-        bottom.add(imprimirBtn);
         cerrarBtn = new JButton("Cerrar");
-        cerrarBtn.addActionListener(e -> cerrar());
+        bottom.add(imprimirBtn);
         bottom.add(cerrarBtn);
         add(bottom, BorderLayout.SOUTH);
+        // Listeners
+        imprimirBtn.addActionListener(e -> imprimirTabla());
+        cerrarBtn.addActionListener(e -> cerrar());
 
     }
 

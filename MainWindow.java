@@ -20,6 +20,9 @@ import View.Deudas.DeudaClientePanel;
 import View.Pagos.AnularPagoPanel;
 import View.Pagos.ListarPagosClientePanel;
 import View.Pagos.PagarCuotaPanel;
+import View.Creditos.AnularCreditoPanel;
+import View.Lotes.ListarLotesPanel;
+
 
 
 public class MainWindow extends JFrame {
@@ -70,9 +73,11 @@ private void mostrarMenus() {
     // ----- inicio (botón) -----
     JButton inicioBtn = new JButton("Inicio");
     styleMenuComponent.accept(inicioBtn);
-    inicioBtn.addActionListener(e -> mostrarMenus()); // vuelve a la pantalla principal
+    inicioBtn.setForeground(Color.WHITE);
+    inicioBtn.setBackground(new Color(56, 81, 145));
+    inicioBtn.addActionListener(e -> mostrarMenus());
     menuBar.add(inicioBtn);
-    menuBar.add(Box.createHorizontalStrut(8)); // separador visual
+    menuBar.add(Box.createHorizontalStrut(8));
 
     // ---- Menú Clientes ----
     JMenu clientesMenu = new JMenu("Clientes");
@@ -111,6 +116,9 @@ private void mostrarMenus() {
     JMenuItem listarTodosCreditosItem = new JMenuItem("Listar Todos los Créditos");
     listarTodosCreditosItem.addActionListener(e -> mostrarListarTodosCreditos());
     creditosMenu.add(listarTodosCreditosItem);
+    JMenuItem anularCreditoItem = new JMenuItem("Anular Crédito");
+    anularCreditoItem.addActionListener(e -> mostrarAnularCredito());
+    creditosMenu.add(anularCreditoItem);
     menuBar.add(creditosMenu);
 
     // ---- Menú Pagos ----
@@ -147,6 +155,9 @@ private void mostrarMenus() {
     JMenuItem loteActualItem = new JMenuItem("Lote Actual");
     loteActualItem.addActionListener(e -> mostrarLotePanel());
     loteMenu.add(loteActualItem);
+    JMenuItem listarLotesItem = new JMenuItem("Listar Lotes");
+    listarLotesItem.addActionListener(e -> mostrarListarLotesPanel());
+    loteMenu.add(listarLotesItem);
     menuBar.add(loteMenu);
 
     // ---- Menú Sistema ----
@@ -187,11 +198,29 @@ private void mostrarMenus() {
     mainPanel.add(bienvenidaPanel, BorderLayout.CENTER);
     mainPanel.revalidate();
     mainPanel.repaint();
-}
+
+    }
+
+    // Método para listar los lotes
+    private void mostrarListarLotesPanel() {
+        mainPanel.removeAll();
+        ListarLotesPanel panel = new ListarLotesPanel( () -> mostrarMenus() );
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+
     // Mostrar ListarPagosClientePanel
     private void mostrarListarPagosCliente() {
         mainPanel.removeAll();
         ListarPagosClientePanel panel = new ListarPagosClientePanel();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        refrescar();
+    }
+
+    // Mostrar AnularCreditoPanel
+    private void mostrarAnularCredito() {
+        mainPanel.removeAll();
+        AnularCreditoPanel panel = new AnularCreditoPanel( () -> mostrarMenus() );
         mainPanel.add(panel, BorderLayout.CENTER);
         refrescar();
     }
@@ -238,7 +267,7 @@ private void mostrarMenus() {
     // Mostrar LotePanel
     private void mostrarLotePanel() {
         mainPanel.removeAll();
-        View.LotePanel panel = new View.LotePanel();
+        View.Lotes.LotePanel panel = new View.Lotes.LotePanel();
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
