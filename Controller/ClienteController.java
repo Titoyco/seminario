@@ -19,10 +19,11 @@ public class ClienteController {
 
     // Baja cliente (desde BajaClientePanel)
     public static boolean bajaCliente(int idCliente) {
-        if (CreditoDAO.existeCreditoVigentePorCliente(idCliente)) {
-            // No se puede eliminar el cliente si tiene créditos vigentes
-            // muetra mensaje de error
-            System.out.println("Error: No se puede eliminar el cliente con créditos vigentes.");
+        // Política: NO permitir la eliminación si existe cualquier registro asociado (crédito),
+        // independientemente de su estado. Se verifica la existencia de créditos vinculados.
+        if (CreditoDAO.existeCreditosPorCliente(idCliente)) {
+            // No se puede eliminar el cliente si tiene créditos asociados
+            System.out.println("Error: No se puede eliminar el cliente con créditos asociados.");
             return false;
         }
         return ClienteDAO.eliminarPorId(idCliente);

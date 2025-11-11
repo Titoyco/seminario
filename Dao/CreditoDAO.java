@@ -177,4 +177,19 @@ public class CreditoDAO {
         return false;
     }
 
+    // Verifica si el cliente tiene cualquier crédito asociado (independientemente del estado).
+    public static boolean existeCreditosPorCliente(int idCliente) {
+        String sql = "SELECT 1 FROM creditos WHERE id_cliente = ? LIMIT 1";
+        try (Connection conn = ConexionMySQL.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCliente);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error existeCreditosPorCliente: " + e.getMessage());
+        }
+        return false;
+    }
+
 }

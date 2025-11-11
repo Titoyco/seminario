@@ -23,13 +23,20 @@ public class ListaClientesPanel extends JPanel {
     public ListaClientesPanel( Runnable onClose ) {
         this.onClose = onClose;
         setLayout(new BorderLayout());
+        setBackground(new Color(245, 249, 255));
         // Columnas
         String[] columnas = {"ID", "Nombre", "Documento", "Dirección", "Teléfono", "Email"};
         modelo = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modelo);
         tabla.setFillsViewportHeight(true);
         // Añadir componentes
-        add(new JLabel("Listado de Clientes", JLabel.CENTER), BorderLayout.NORTH);
+        JLabel tituloLbl = new JLabel("Listado de Clientes", SwingConstants.CENTER);
+        tituloLbl.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        tituloLbl.setForeground(new Color(56,81,145));
+        tituloLbl.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        add(tituloLbl, BorderLayout.NORTH);
+
+
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
 
